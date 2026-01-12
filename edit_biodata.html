@@ -1,0 +1,524 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Biodata - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="pages.css">
+
+    <style>
+        .edit-biodata-page {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 70px auto 2rem;
+            /* Reduced from 100px */
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--gray-600);
+        }
+
+        .form-section {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem 1.5rem;
+        }
+
+        .form-grid .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .photo-upload {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem;
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            background: var(--gray-50);
+        }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 2rem;
+            color: var(--gray-400);
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-upload-info h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .photo-upload-info p {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: 0.75rem;
+        }
+
+        .save-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 1rem 2rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .save-bar .status-info {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .save-bar .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .full-width {
+                grid-column: span 1;
+            }
+
+            .photo-upload {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header header-solid" id="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <span>EWU Matrimony</span>
+                </a>
+                <div class="nav-buttons">
+                    <!-- Theme Toggle Removed -->
+                    <a href="profile.html" class="btn btn-outline-dark">My Profile</a>
+                    <a href="login.html" class="btn btn-primary">Logout</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="edit-biodata-page">
+        <div class="page-header">
+            <h1 style="font-size: 2.5rem;">Create Your Biodata</h1>
+        </div>
+
+        <form id="biodataForm" enctype="multipart/form-data">
+            <!-- Photo Upload -->
+            <div class="form-section">
+                <h3> Profile Photo</h3>
+                <div class="photo-upload">
+                    <div class="photo-preview" id="photoPreview">
+                        <span></span>
+                    </div>
+                    <div class="photo-upload-info">
+                        <h4>Upload Your Photo</h4>
+                        <p>A clear, recent photo will help others recognize you. Max 2MB, JPG/PNG only.</p>
+                        <input type="file" id="photo" name="photo" accept="image/jpeg,image/png">
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Me -->
+            <div class="form-section">
+                <h3> About Me</h3>
+                <div class="form-group full-width">
+                    <label for="about_me">Write about yourself</label>
+                    <textarea id="about_me" name="about_me"
+                        placeholder="Describe your personality, values, hobbies..."></textarea>
+                </div>
+            </div>
+
+            <!-- Physical Attributes -->
+            <div class="form-section">
+                <h3> Physical Attributes</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="height">Height</label>
+                        <input type="text" id="height" name="height" placeholder="e.g., 5'6&quot;">
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight</label>
+                        <input type="text" id="weight" name="weight" placeholder="e.g., 65 kg">
+                    </div>
+                    <div class="form-group">
+                        <label for="skin_tone">Skin Tone</label>
+                        <select id="skin_tone" name="skin_tone">
+                            <option value="">Select</option>
+                            <option value="fair">Fair</option>
+                            <option value="light brown">Light Brown</option>
+                            <option value="brown">Brown</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="blood_group">Blood Group</label>
+                        <select id="blood_group" name="blood_group">
+                            <option value="">Select</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="marital_status">Marital Status</label>
+                        <select id="marital_status" name="marital_status">
+                            <option value="">Select</option>
+                            <option value="Never Married">Never Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education & Career -->
+            <div class="form-section">
+                <h3> Education & Career</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="education">Highest Education</label>
+                        <input type="text" id="education" name="education" placeholder="e.g., BSc in CSE, EWU">
+                    </div>
+                    <div class="form-group">
+                        <label for="occupation">Occupation</label>
+                        <input type="text" id="occupation" name="occupation" placeholder="e.g., Software Engineer">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company/Organization</label>
+                        <input type="text" id="company" name="company" placeholder="e.g., Tech Solutions Ltd.">
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Monthly Income (Optional)</label>
+                        <input type="text" id="income" name="income" placeholder="e.g., 50,000 BDT">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-section">
+                <h3> Address</h3>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="present_address">Present Address</label>
+                        <textarea id="present_address" name="present_address" rows="2"
+                            placeholder="Your current living address"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="permanent_address">Permanent Address</label>
+                        <textarea id="permanent_address" name="permanent_address" rows="2"
+                            placeholder="Your hometown/permanent address"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Information -->
+            <div class="form-section">
+                <h3> Family Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="father_name">Father's Name</label>
+                        <input type="text" id="father_name" name="father_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="father_profession">Father's Profession</label>
+                        <input type="text" id="father_profession" name="father_profession">
+                    </div>
+                    <div class="form-group">
+                        <label for="mother_name">Mother's Name</label>
+                        <input type="text" id="mother_name" name="mother_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="mother_profession">Mother's Profession</label>
+                        <input type="text" id="mother_profession" name="mother_profession">
+                    </div>
+                    <div class="form-group">
+                        <label for="siblings">Siblings</label>
+                        <input type="text" id="siblings" name="siblings" placeholder="e.g., 1 Brother, 2 Sisters">
+                    </div>
+                    <div class="form-group">
+                        <label for="family_type">Family Type</label>
+                        <select id="family_type" name="family_type">
+                            <option value="">Select</option>
+                            <option value="Nuclear">Nuclear</option>
+                            <option value="Joint">Joint</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="family_class">Family Economic Status</label>
+                        <select id="family_class" name="family_class">
+                            <option value="">Select</option>
+                            <option value="lower class">Lower Class</option>
+                            <option value="lower middle class">Lower Middle Class</option>
+                            <option value="middle class">Middle Class</option>
+                            <option value="upper middle class">Upper Middle Class</option>
+                            <option value="rich">Rich</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partner Preferences -->
+            <div class="form-section">
+                <h3> Partner Preferences</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="preferred_age_min">Preferred Age (Min)</label>
+                        <input type="number" id="preferred_age_min" name="preferred_age_min" placeholder="e.g., 22">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_age_max">Preferred Age (Max)</label>
+                        <input type="number" id="preferred_age_max" name="preferred_age_max" placeholder="e.g., 30">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_height">Preferred Height</label>
+                        <input type="text" id="preferred_height" name="preferred_height"
+                            placeholder="e.g., 5'0&quot; - 5'8&quot;">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_education">Preferred Education</label>
+                        <input type="text" id="preferred_education" name="preferred_education"
+                            placeholder="e.g., Graduate or higher">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_profession">Preferred Profession</label>
+                        <input type="text" id="preferred_profession" name="preferred_profession"
+                            placeholder="e.g., Any respectable job">
+                    </div>
+                    <div class="form-group">
+                        <label for="preferred_location">Preferred Location</label>
+                        <input type="text" id="preferred_location" name="preferred_location" placeholder="e.g., Dhaka">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="expectations">What do you expect from your life partner?</label>
+                        <textarea id="expectations" name="expectations"
+                            placeholder="Describe the qualities you're looking for..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Spacer for fixed save bar -->
+        <div style="height: 100px;"></div>
+    </main>
+
+    <!-- Fixed Save Bar -->
+    <div class="save-bar">
+        <div class="status-info">
+            <span id="biodataStatus">Status: <strong>Draft</strong></span>
+        </div>
+        <div class="buttons">
+            <button type="button" class="btn btn-outline-dark" id="saveDraftBtn">Save as Draft</button>
+            <button type="button" class="btn btn-primary" id="submitBtn"> Submit for Verification</button>
+        </div>
+    </div>
+
+    <script>
+        // Photo Preview
+        document.getElementById('photo').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load existing data
+        async function loadProfile() {
+            try {
+                const response = await fetch('api/profile/get.php');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const data = result.data;
+                    // Populate all form fields
+                    const fields = ['about_me', 'height', 'weight', 'skin_tone', 'blood_group', 'marital_status',
+                        'education', 'occupation', 'company', 'income', 'present_address', 'permanent_address',
+                        'father_name', 'father_profession', 'mother_name', 'mother_profession', 'siblings',
+                        'family_type', 'family_class', 'preferred_age_min', 'preferred_age_max', 'preferred_height',
+                        'preferred_education', 'preferred_profession', 'preferred_location', 'expectations'];
+
+                    fields.forEach(field => {
+                        const el = document.getElementById(field);
+                        if (el && data[field]) el.value = data[field];
+                    });
+
+                    // Update status display
+                    if (data.biodata_status) {
+                        const statusEl = document.getElementById('biodataStatus');
+                        const statusMap = {
+                            'draft': 'Draft',
+                            'pending': ' Pending Verification',
+                            'verified': ' Verified',
+                            'rejected': ' Rejected'
+                        };
+                        statusEl.innerHTML = `Status: <strong>${statusMap[data.biodata_status] || 'Draft'}</strong>`;
+                    }
+
+                    // Show existing photo
+                    if (data.photo) {
+                        document.getElementById('photoPreview').innerHTML = `<img src="${data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo}" alt="Profile">`;
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading profile:', e);
+            }
+        }
+
+        // Save/Submit form
+        async function saveForm(submitForVerification = false) {
+            const form = document.getElementById('biodataForm');
+            const formData = new FormData(form);
+            formData.append('submit_for_verification', submitForVerification ? '1' : '0');
+
+            const btn = submitForVerification ? document.getElementById('submitBtn') : document.getElementById('saveDraftBtn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('api/profile/save.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (submitForVerification) {
+                        alert('Biodata submitted for verification! Admin will review it shortly.');
+                    } else {
+                        alert('Draft saved successfully!');
+                    }
+                    loadProfile(); // Refresh status
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error. Please try again.');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('saveDraftBtn').addEventListener('click', () => saveForm(false));
+        document.getElementById('submitBtn').addEventListener('click', () => saveForm(true));
+
+        // Initialize
+        loadProfile();
+    </script>
+</body>
+
+</html>

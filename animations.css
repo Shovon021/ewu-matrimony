@@ -1,0 +1,86 @@
+/* Page Transition */
+body {
+    animation: page-pop-in 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+@keyframes page-pop-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Scroll Reveal Animation */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Wiggle Animation for Hover */
+@keyframes wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-3deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+
+    75% {
+        transform: rotate(-1deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.hover-wiggle:hover {
+    animation: wiggle 0.4s ease-in-out;
+}
+
+/* Floating Shapes (Now Geometric Pop Shapes) */
+.pop-shape {
+    position: absolute;
+    background: var(--white);
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0px #000;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.shape-circle {
+    border-radius: 50%;
+    background: var(--yellow);
+}
+
+.shape-square {
+    border-radius: 0;
+    background: var(--secondary);
+}
+
+.shape-triangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid var(--accent);
+    background: transparent;
+    box-shadow: none;
+    filter: drop-shadow(4px 4px 0px #000);
+}

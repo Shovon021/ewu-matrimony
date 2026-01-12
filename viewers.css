@@ -1,0 +1,43 @@
+/* Viewers List Styles */
+.viewers-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 1rem;
+    padding: 1rem 0;
+    scrollbar-width: thin;
+}
+
+.viewer-card {
+    min-width: 100px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.viewer-card:hover {
+    transform: translateY(-5px);
+}
+
+.viewer-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+    object-fit: cover;
+    border: 2px solid var(--primary-light);
+}
+
+.viewer-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+.viewer-time {
+    font-size: 0.7rem;
+    color: var(--gray-500);
+}

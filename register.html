@@ -1,0 +1,557 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Wizard - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="icons.css">
+    <style>
+        /* Video Background Styles */
+        .register-video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .register-video-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .register-video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        body {
+            background: transparent !important;
+            min-height: 100vh;
+        }
+
+        /* Wizard Specific Styles (Neo-Brutalist) */
+        .wizard-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            /* Pop Card Reset */
+            border-radius: 0;
+            border: 3px solid var(--black);
+            box-shadow: 8px 8px 0 var(--black);
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .wizard-header {
+            background: var(--white);
+            padding: 2.5rem 2rem 0;
+            text-align: center;
+            border-bottom: 3px solid var(--black);
+        }
+
+        /* Progress Bar */
+        .wizard-progress {
+            margin-top: 1.5rem;
+            position: relative;
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+            /* Ensure height for dots */
+        }
+
+        .progress-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(-50%);
+            background: var(--white);
+            height: 12px;
+            border: 2px solid var(--black);
+            border-radius: 6px;
+            z-index: 1;
+            /* Remove margins and flex props */
+            margin: 0;
+            box-shadow: 2px 2px 0 var(--gray-400);
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1;
+            border-right: 2px solid var(--black);
+        }
+
+        .steps-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border-radius: 50%;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: var(--black);
+            transition: all 0.2s ease;
+            position: relative;
+            border: 3px solid var(--black);
+            box-shadow: 2px 2px 0 var(--black);
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: 4px 4px 0 var(--black);
+            transform: translate(-2px, -2px) scale(1.1);
+        }
+
+        .step-dot svg {
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+        }
+
+        .dot-check {
+            display: none;
+        }
+
+        .step-dot.completed .dot-icon {
+            display: none;
+        }
+
+        .step-dot.completed .dot-check {
+            display: block;
+        }
+
+        .step-dot.completed {
+            background: linear-gradient(135deg, var(--success), #4ade80);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(50, 205, 50, 0.35), 0 0 0 2px var(--success);
+        }
+
+        /* Step Content */
+        .step-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wizard-buttons {
+            padding: 1rem 2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-prev {
+            visibility: hidden;
+        }
+
+        .btn-prev.visible {
+            visibility: visible;
+        }
+
+        .wizard-title h2 {
+            margin-bottom: 0.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--gray-800);
+            font-size: 1.75rem;
+            letter-spacing: -0.02em;
+            /* Tighter tracking for professional look */
+        }
+
+        .wizard-title p {
+            color: var(--gray-500);
+            font-size: 1rem;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Video Background -->
+    <div class="register-video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="hero-2.mp4" type="video/mp4">
+        </video>
+        <div class="register-video-overlay"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" id="header" style="position: relative; z-index: 100;">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <span>EWU Matrimony</span>
+                </a>
+                <div class="nav-buttons" style="margin-left: auto;">
+                    <span style="margin-right: 1rem; color: white;">Already have an account?</span>
+                    <a href="login.html" class="btn btn-outline"
+                        style="background: white; color: black; border: none;">Login</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="wizard-container pop-card w-full max-w-lg mx-auto bg-white relative z-10 p-0 border-no-radius">
+        <div class="wizard-header">
+            <div class="wizard-title">
+                <h2>Create Your Profile</h2>
+                <p>Find your perfect match in 3 simple steps</p>
+            </div>
+
+            <div class="wizard-progress">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="steps-wrapper">
+                    <!-- Step 1: User Info -->
+                    <div class="step-dot active" data-step="1">
+                        <div class="dot-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg></div>
+                        <div class="dot-check"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                            </svg></div>
+                    </div>
+                    <!-- Step 2: Personal Details -->
+                    <div class="step-dot" data-step="2">
+                        <div class="dot-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                            </svg></div>
+                        <div class="dot-check"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                            </svg></div>
+                    </div>
+                    <!-- Step 3: Done/Love -->
+                    <div class="step-dot" data-step="3">
+                        <div class="dot-icon"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg></div>
+                        <div class="dot-check"><svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                            </svg></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="wizardForm">
+            <!-- STEP 1: Account -->
+            <div class="step-content active" id="step1">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem;">Step 1: Account Details</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" name="lastName" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">EWU Student ID</label>
+                    <input type="text" class="form-input" name="studentId" placeholder="YYYY-S-DD-NNN" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" name="password" required>
+                </div>
+            </div>
+
+            <!-- STEP 2: Personal -->
+            <div class="step-content" id="step2">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem;">Step 2: Personal Information</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <select class="form-input" name="gender" required>
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-input" name="dob" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Religion</label>
+                    <select class="form-input" name="religion" required>
+                        <option value="">Select</option>
+                        <option value="islam">Islam</option>
+                        <option value="hinduism">Hinduism</option>
+                        <option value="christianity">Christianity</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STEP 3: Academic -->
+            <div class="step-content" id="step3">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem;">Step 3: Academic & Verification</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Student Status</label>
+                        <select class="form-input" name="status" required>
+                            <option value="">Select</option>
+                            <option value="undergraduate">Undergraduate</option>
+                            <option value="graduate">Graduate</option>
+                            <option value="alumni">Alumni</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Batch</label>
+                        <select class="form-input" name="batch" required>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Upload ID Card</label>
+                    <div id="uploadContainer"
+                        style="border: 2px dashed var(--gray-300); padding: 2rem; text-align: center; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s;">
+                        <svg width="40" height="40" fill="var(--gray-400)" viewBox="0 0 24 24">
+                            <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5z" />
+                        </svg>
+                        <p id="uploadText" style="margin-top: 0.5rem; color: var(--gray-600);">Click to upload ID Card
+                        </p>
+                        <input type="file" name="id_card" id="idCardInput" style="display: none;" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required> I agree to terms & conditions
+                    </label>
+                </div>
+            </div>
+
+            <div class="wizard-buttons">
+                <button type="button" class="btn btn-outline btn-prev" id="prevBtn">Back</button>
+                <button type="button" class="btn btn-primary" id="nextBtn">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const steps = 3;
+        let currentStep = 1;
+
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const progressFill = document.getElementById('progressFill');
+        const dots = document.querySelectorAll('.step-dot');
+        const contents = document.querySelectorAll('.step-content');
+
+        function updateUI() {
+            // Update Progress Bar
+            const progress = ((currentStep - 1) / (steps - 1)) * 100;
+            progressFill.style.width = `${progress}%`;
+
+            // Update Dots
+            dots.forEach(dot => {
+                const step = parseInt(dot.dataset.step);
+                dot.classList.remove('active', 'completed');
+                if (step === currentStep) {
+                    dot.classList.add('active');
+                } else if (step < currentStep) {
+                    dot.classList.add('completed');
+                }
+            });
+
+            // Show/Hide Content
+            contents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `step${currentStep}`) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Update Buttons
+            prevBtn.classList.toggle('visible', currentStep > 1);
+            if (currentStep === steps) {
+                nextBtn.textContent = 'Create Account';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        nextBtn.addEventListener('click', () => {
+            // Mock Validation (Simple check for empty required fields in current step)
+            const currentSection = document.getElementById(`step${currentStep}`);
+            const inputs = currentSection.querySelectorAll('input[required], select[required]');
+            let valid = true;
+
+            inputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.style.borderColor = 'red';
+                } else {
+                    input.style.borderColor = ''; // Reset
+                }
+            });
+
+            if (!valid) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (currentStep < steps) {
+                currentStep++;
+                updateUI();
+            } else {
+                // Submit Form using Fetch API
+                const form = document.getElementById('wizardForm');
+                const formData = new FormData(form);
+
+                // Disable button and show loading state
+                nextBtn.disabled = true;
+                nextBtn.textContent = 'Creating Account...';
+
+                fetch('api/auth/register.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(async response => {
+                        const text = await response.text();
+                        try {
+                            const data = JSON.parse(text);
+                            if (data.success) {
+                                Toast.success('Success', data.message);
+                                setTimeout(() => window.location.href = 'index.html', 2000);
+                            } else {
+                                Toast.error('Registration Failed', data.message);
+                                nextBtn.disabled = false;
+                                nextBtn.textContent = 'Create Account';
+                            }
+                        } catch (e) {
+                            console.error('Server Error:', text);
+                            Toast.error('System Error', 'Server returned invalid response. Check console.');
+                            alert('Server Error: ' + text.substring(0, 100) + '...');
+                            nextBtn.disabled = false;
+                            nextBtn.textContent = 'Create Account';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Network Error:', error);
+                        Toast.error('Network Error', 'Connection failed.');
+                        nextBtn.disabled = false;
+                        nextBtn.textContent = 'Create Account';
+                    });
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        });
+
+        // ID Card Upload Logic
+        const uploadContainer = document.getElementById('uploadContainer');
+        const idCardInput = document.getElementById('idCardInput');
+        const uploadText = document.getElementById('uploadText');
+
+        uploadContainer.addEventListener('click', () => {
+            idCardInput.click();
+        });
+
+        idCardInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                uploadText.textContent = `Selected: ${fileName}`;
+                uploadContainer.style.borderColor = 'var(--primary)';
+                uploadContainer.style.backgroundColor = 'var(--primary-light)';
+            }
+        });
+
+        // Initialize UI
+        updateUI();
+    </script>
+</body>
+
+</html>

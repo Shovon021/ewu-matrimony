@@ -1,0 +1,432 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Learn about EWU Matrimony - the trusted platform for finding life partners from East West University.">
+    <title>About Us - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="icons.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header header-solid" id="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <span>EWU Matrimony</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="search.html" class="nav-link">Search Biodatas</a>
+                    <a href="about.html" class="nav-link active">About Us</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+
+                <div class="nav-buttons">
+                    <!-- Theme Toggle Removed -->
+                    <a href="login.html" class="btn btn-outline-dark">Login</a>
+                    <a href="register.html" class="btn btn-primary">Sign Up</a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path
+                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+        </button>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Biodatas</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html">Login</a>
+            <a href="register.html">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Page Header with Video Background -->
+    <section class="page-header page-header-video">
+        <video class="page-header-video-bg" autoplay muted loop playsinline poster="hero-bg.jpg">
+            <source src="herovideo.mp4" type="video/mp4">
+        </video>
+        <div class="page-header-overlay"></div>
+        <div class="container">
+            <h1>About EWU Matrimony</h1>
+            <p>Building meaningful connections within the EWU community</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="features" style="padding-top: var(--space-3xl);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Story</span>
+                <h2 class="section-title">Why We Started</h2>
+                <p class="section-subtitle" style="max-width: 800px;">
+                    EWU Matrimony was born from a simple idea: that the best life partners are often found within
+                    communities that share common values, education, and experiences. As EWU alumni ourselves, we
+                    believe our university community provides the perfect foundation for meaningful, lasting
+                    relationships.
+                </p>
+            </div>
+
+            <div class="steps-container" style="margin-top: var(--space-2xl);">
+                <a href="about-mission.html" class="step-card step-card-link">
+                    <div class="step-card-image">
+                        <img src="images/mission.png" alt="Our Mission">
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>To create a safe, trusted platform where EWU students and alumni can find their perfect life
+                        partners within our university community.</p>
+                </a>
+
+                <a href="about-vision.html" class="step-card step-card-link">
+                    <div class="step-card-image">
+                        <img src="images/vision.png" alt="Our Vision">
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>To become the most trusted matrimony platform for EWU graduates, helping build strong families
+                        rooted in shared educational values.</p>
+                </a>
+
+                <a href="about-values.html" class="step-card step-card-link">
+                    <div class="step-card-image">
+                        <img src="images/values.png" alt="Our Values">
+                    </div>
+                    <h3>Our Values</h3>
+                    <p>Trust, privacy, respect, and authenticity are at the core of everything we do for our EWU family.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="cta-section" style="padding: var(--space-2xl) 0;">
+        <div class="container">
+            <div class="hero-stats" style="margin: 0; padding: 0; border: none; justify-content: space-around;">
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-members">2,000+</div>
+                    <div class="stat-label">EWU Members</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-matches">500+</div>
+                    <div class="stat-label">Successful Matches</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-departments">15+</div>
+                    <div class="stat-label">EWU Departments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="stat-satisfaction">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Version 6: Real + Simulated Growth
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('api/public/stats.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.data) {
+                        // REAL DATA from Database
+                        const members = Number(data.data.members);
+                        const matches = Number(data.data.matches);
+                        const departments = Number(data.data.departments);
+
+                        if (!isNaN(members) && members > 0) animateStatsSafe('stat-members', members, '+');
+                        if (!isNaN(matches) && matches > 0) animateStatsSafe('stat-matches', matches, '+');
+                        if (!isNaN(departments) && departments > 0) animateStatsSafe('stat-departments', departments, '+');
+                    }
+                })
+                .catch(e => {
+                    console.log('Offline mode: Using simulated growth data');
+                    // SIMULATED DATA (Increases day by day)
+                    // Start Date: Jan 1, 2024
+                    const startDate = new Date('2024-01-01').getTime();
+                    const now = new Date().getTime();
+                    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+
+                    // Growth Logic:
+                    // Members: Start 1500, +2 per day
+                    // Matches: Start 400, +0.6 per day
+                    const simulatedMembers = 1500 + (daysPassed * 2);
+                    const simulatedMatches = 400 + Math.floor(daysPassed * 0.6);
+
+                    animateStatsSafe('stat-members', simulatedMembers, '+');
+                    animateStatsSafe('stat-matches', simulatedMatches, '+');
+                });
+        });
+
+        function animateStatsSafe(id, end, suffix) {
+            const obj = document.getElementById(id);
+            if (!obj || isNaN(end)) return;
+
+            let startTimestamp = null;
+            const duration = 2000;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.textContent = Math.floor(progress * end) + suffix;
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+
+    <!-- What Makes Us Different -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Why Choose Us</span>
+                <h2 class="section-title">What Makes Us Different</h2>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                        </svg>
+                    </div>
+                    <h4>EWU Exclusive</h4>
+                    <p>Only for EWU students and alumni. All profiles verified through @ewubd.edu email.</p>
+                </div>
+
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                        </svg>
+                    </div>
+                    <h4>Privacy First</h4>
+                    <p>Your personal information is protected with advanced encryption and customizable privacy
+                        settings.</p>
+                </div>
+
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                    </div>
+                    <h4>Smart Matching</h4>
+                    <p>Our algorithm considers department, batch, and preferences to suggest compatible EWU matches.</p>
+                </div>
+
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
+                        </svg>
+                    </div>
+                    <h4>Safe Environment</h4>
+                    <p>We actively monitor and remove fake profiles to maintain a safe and respectful EWU community.</p>
+                </div>
+
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                        </svg>
+                    </div>
+                    <h4>Secure Communication</h4>
+                    <p>Connect with potential matches through our secure in-app messaging system.</p>
+                </div>
+
+                <div class="feature-card reveal hover-lift">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                        </svg>
+                    </div>
+                    <h4>Dedicated Support</h4>
+                    <p>Our EWU alumni support team is always ready to help you throughout your journey.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="features" style="background: var(--white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Team</span>
+                <h2 class="section-title">Meet the EWU Team</h2>
+                <p class="section-subtitle">EWU alumni dedicated to helping fellow EWUians find love</p>
+            </div>
+
+            <div class="profiles-grid" style="max-width: 700px; margin: 0 auto; grid-template-columns: repeat(2, 1fr);">
+                <!-- Sarfaraz Ahamed Shovon -->
+                <div class="profile-card hover-lift">
+                    <div class="profile-image" style="height: 320px;">
+                        <img src="images/sarfaraz.png" alt="Sarfaraz Ahamed Shovon" style="object-position: top;">
+                    </div>
+                    <div class="profile-info" style="text-align: center;">
+                        <h4>Sarfaraz Ahamed Shovon</h4>
+                        <p class="profile-details" style="color: var(--primary); font-weight: 600;">Project Advisor &
+                            Mentor</p>
+                        <p class="profile-location" style="margin-top: 0.5rem;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                            </svg>
+                            CSE, EWU
+                        </p>
+                        <p style="font-size: 0.9rem; color: var(--gray-600); margin-top: 0.75rem; line-height: 1.5;">
+                            A brilliant mind and a caring brother. His guidance and unwavering support made this project
+                            possible.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Rukaiya Binta Hossain -->
+                <div class="profile-card hover-lift">
+                    <div class="profile-image" style="height: 320px;">
+                        <img src="images/rukaiya-team.png" alt="Rukaiya Binta Hossain" style="object-position: top;">
+                    </div>
+                    <div class="profile-info" style="text-align: center;">
+                        <h4>Rukaiya Binta Hossain</h4>
+                        <p class="profile-details" style="color: var(--primary); font-weight: 600;">Founder & Developer
+                        </p>
+                        <p class="profile-location" style="margin-top: 0.5rem;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                            </svg>
+                            CSE, EWU
+                        </p>
+                        <p style="font-size: 0.9rem; color: var(--gray-600); margin-top: 0.75rem; line-height: 1.5;">
+                            Passionate about connecting hearts through technology. Believes love stories begin with
+                            shared values and dreams.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Join Our EWU Community Today</h2>
+                <p>Start your journey to finding your perfect life partner from East West University.</p>
+                <a href="register.html" class="btn btn-white btn-lg">Create Free Account</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </div>
+                        <span>EWU Matrimony</span>
+                    </a>
+                    <p>Find your marriage partner from East West University.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="search.html">Search Biodatas</a></li>
+                        <li><a href="edit_biodata.html">Create Biodata</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 EWU Matrimony. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

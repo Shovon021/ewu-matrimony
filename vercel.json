@@ -1,0 +1,65 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "*.php",
+      "use": "vercel-php@0.7.1"
+    },
+    {
+      "src": "api/**/*.php",
+      "use": "vercel-php@0.7.1"
+    },
+    {
+      "src": "config/**/*.php",
+      "use": "vercel-php@0.7.1"
+    },
+    {
+      "src": "lib/**/*.php",
+      "use": "vercel-php@0.7.1"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.css",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "images/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.jpg",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.png",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.mp4",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)\\.php",
+      "dest": "/$1.php"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ],
+  "env": {
+    "PHP_INI_SCAN_DIR": "."
+  }
+}

@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="View detailed biodata profile on EWU Matrimony.">
+    <title>Profile - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="viewers.css">
+    <link rel="stylesheet" href="icons.css">
+</head>
+
+<body class="profile-page">
+    <!-- Header -->
+    <header class="header header-solid" id="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <span>EWU Matrimony</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="search.html" class="nav-link">Search Biodatas</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+
+                <div class="nav-buttons">
+                    <!-- Theme Toggle Removed -->
+                    <a href="matches.html" class="btn btn-outline-dark">Matches</a>
+                    <a href="edit_biodata.html" class="btn btn-outline-dark">Edit</a>
+                    <a href="login.html" class="btn btn-primary">Logout</a>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-close" id="mobileMenuClose">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path
+                    d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+        </button>
+        <div class="mobile-nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Biodatas</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="login.html">Login</a>
+            <a href="register.html">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Profile Header -->
+    <section class="profile-header-section">
+        <div class="container">
+            <div class="profile-header-content">
+                <div class="profile-photo-large">
+                    <img src="" alt="Profile Photo" id="profilePhotoMain">
+                </div>
+                <div class="profile-header-info">
+                    <span class="verified-badge" style="display: inline-flex; align-items: center; margin-bottom: 8px;">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="margin-right: 4px;">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                        EWU Verified Profile
+                    </span>
+                    <h1>...</h1>
+                    <div class="profile-meta">
+                        <span class="profile-meta-item" id="metaAge">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path
+                                    d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z" />
+                            </svg>
+                            ... years old
+                        </span>
+                        <span class="profile-meta-item" id="metaHeight">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path
+                                    d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                            </svg>
+                            ...
+                        </span>
+                        <span class="profile-meta-item" id="metaLocation">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path
+                                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                            </svg>
+                            ...
+                        </span>
+                        <span class="profile-meta-item" id="metaEducation">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                            </svg>
+                            EWU
+                        </span>
+                    </div>
+                    <div class="profile-actions-header">
+                        <button class="btn btn-white">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                            Express Interest
+                        </button>
+                        <button class="btn btn-outline">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path
+                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                            </svg>
+                            Send Message
+                        </button>
+                        <button class="btn btn-outline">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path
+                                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                            </svg>
+                            Shortlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Content -->
+    <section class="container">
+        <div class="profile-content">
+            <!-- Main Content -->
+            <div class="profile-main">
+                <!-- Who Viewed Me Section -->
+                <div class="profile-section" id="viewersSection" style="display:none;">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                        Who Viewed My Profile <span class="badge" id="viewCount">0</span>
+                    </h3>
+                    <div class="viewers-list" id="viewersList">
+                        <!-- Viewers will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- About Me -->
+                <div class="profile-section">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                        About Me
+                    </h3>
+                    <p class="about-text">
+                        Loading profile information...
+                    </p>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="profile-section">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                        Basic Information
+                    </h3>
+                    <div class="info-grid">
+                        <div class="info-item reveal">
+                            <span class="info-label">Full Name</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Age</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Height</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Weight</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Blood Group</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Marital Status</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Religion</span>
+                            <span class="info-value">...</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Nationality</span>
+                            <span class="info-value">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EWU Education -->
+                <div class="profile-section">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
+                        </svg>
+                        EWU Education & Career
+                    </h3>
+                    <div class="info-grid">
+                        <div class="info-item reveal">
+                            <span class="info-label">University</span>
+                            <span class="info-value">East West University</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Department</span>
+                            <span class="info-value">Computer Science & Engineering</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Batch</span>
+                            <span class="info-value">2020</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Graduation Year</span>
+                            <span class="info-value">2023</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Profession</span>
+                            <span class="info-value">Software Engineer</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Company</span>
+                            <span class="info-value">Tech Solutions Ltd.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Family Information -->
+                <div class="profile-section">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg>
+                        Family Information
+                    </h3>
+                    <div class="info-grid">
+                        <div class="info-item reveal">
+                            <span class="info-label">Father's Name</span>
+                            <span class="info-value">Not Specified</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Father's Profession</span>
+                            <span class="info-value" id="fatherProfession">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Mother's Name</span>
+                            <span class="info-value">Not Specified</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Mother's Profession</span>
+                            <span class="info-value" id="motherProfession">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Siblings</span>
+                            <span class="info-value" id="siblings">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Family Type</span>
+                            <span class="info-value" id="familyType">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Partner Preferences -->
+                <div class="profile-section">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        Partner Preferences
+                    </h3>
+                    <div class="info-grid">
+                        <div class="info-item reveal">
+                            <span class="info-label">Preferred Age</span>
+                            <span class="info-value" id="partnerAge">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Preferred Height</span>
+                            <span class="info-value" id="partnerHeight">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Education</span>
+                            <span class="info-value" id="partnerEducation">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Profession</span>
+                            <span class="info-value" id="partnerOccupation">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Location</span>
+                            <span class="info-value">-</span>
+                        </div>
+                        <div class="info-item reveal">
+                            <span class="info-label">Religion</span>
+                            <span class="info-value" id="partnerReligion">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="profile-sidebar">
+                <!-- Contact Card -->
+                <div class="sidebar-card">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                        </svg>
+                        Contact Options
+                    </h4>
+                    <div class="contact-action">
+                        <button class="btn btn-primary btn-block">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                            Express Interest
+                        </button>
+                        <button class="btn btn-outline-dark btn-block">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path
+                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                            </svg>
+                            Send Message
+                        </button>
+                        <p
+                            style="font-size: 0.85rem; color: var(--gray-500); text-align: center; margin-top: var(--space-md);">
+                            Login required to contact this EWU member
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Similar EWU Profiles -->
+                <div class="sidebar-card">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+                        </svg>
+                        Similar EWU Profiles
+                    </h4>
+                    <div class="similar-profiles" id="similarProfiles">
+                        <p style="color: var(--gray-500); text-align: center; padding: 1rem;">Similar profiles will
+                            appear here once you're logged in.</p>
+                    </div>
+                </div>
+
+                <!-- Report Profile -->
+                <div class="sidebar-card" style="background: var(--gray-50);">
+                    <h4 style="color: var(--gray-600);">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+                        </svg>
+                        Report
+                    </h4>
+                    <p style="font-size: 0.85rem; color: var(--gray-500); margin-bottom: var(--space-md);">
+                        Found something inappropriate? Let us know.
+                    </p>
+                    <button class="btn-text" style="color: var(--danger);">Report this profile</button>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                            </svg>
+                        </div>
+                        <span>EWU Matrimony</span>
+                    </a>
+                    <p>Find your marriage partner from East West University.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="search.html">Search Biodatas</a></li>
+                        <li><a href="edit_biodata.html">Create Biodata</a></li>
+                        <li><a href="login.html">Login</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 EWU Matrimony. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Load Who Viewed Me
+        async function loadViewers() {
+            try {
+                const response = await fetch('api/profile/viewers.php');
+                const result = await response.json();
+
+                if (result.success) {
+                    const section = document.getElementById('viewersSection');
+                    const countBadge = document.getElementById('viewCount');
+                    const container = document.getElementById('viewersList');
+
+                    if (result.total_views > 0) {
+                        section.style.display = 'block';
+                        countBadge.textContent = result.total_views;
+
+                        container.innerHTML = '';
+                        result.viewers.forEach(viewer => {
+                            const photoSrc = viewer.photo
+                                ? (viewer.photo.startsWith('http') ? viewer.photo : `uploads/${viewer.photo}`)
+                                : `https://ui-avatars.com/api/?name=${viewer.first_name}&background=random`;
+
+                            const div = document.createElement('div');
+                            div.className = 'viewer-card';
+                            div.onclick = () => window.location.href = `search.html?profile_id=${viewer.id}`; // Ideally view specific profile
+                            div.innerHTML = `
+    <img src="${photoSrc}" class="viewer-avatar" alt="${viewer.first_name}">
+    <div class="viewer-name">${viewer.first_name}</div>
+    <div class="viewer-time">${new Date(viewer.viewed_at).toLocaleDateString()}</div>
+    `;
+                            container.appendChild(div);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading viewers:', e);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadViewers();
+        });
+    </script>
+    <script>
+        // Robust Profile Loading Logic
+        async function loadProfile() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const profileId = urlParams.get('id');
+                const apiEndpoint = profileId ? 'api/profile/get_public.php?id=' + profileId : 'api/profile/get.php';
+
+                const response = await fetch(apiEndpoint);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const data = result.data;
+
+                    // Helper to update text by label
+                    const updateField = (label, value) => {
+                        const items = document.querySelectorAll('.info-item');
+                        for (let item of items) {
+                            const labelEl = item.querySelector('.info-label');
+                            if (labelEl && labelEl.textContent.trim().includes(label)) {
+                                const valueEl = item.querySelector('.info-value');
+                                if (valueEl) valueEl.textContent = value || 'Not Specified';
+                                return;
+                            }
+                        }
+                    };
+
+                    // Update Image
+                    const heroImg = document.querySelector('.profile-header img') || document.querySelector('.profile-main img');
+                    if (heroImg) {
+                        heroImg.src = data.photo
+                            ? (data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo)
+                            : 'https://ui-avatars.com/api/?name=' + data.first_name + '+' + data.last_name + '&background=random&size=400';
+                    }
+
+                    // Update About Me
+                    const aboutText = document.querySelector('.about-text');
+                    if (aboutText) aboutText.innerHTML = data.about_me ? data.about_me.replace(/\n/g, '<br>') : 'No description provided.';
+
+                    // Calculate Age
+                    let age = 'N/A';
+                    if (data.dob) {
+                        const birthDate = new Date(data.dob);
+                        const today = new Date();
+                        age = today.getFullYear() - birthDate.getFullYear();
+                        const m = today.getMonth() - birthDate.getMonth();
+                        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                            age--;
+                        }
+                    }
+
+                    // Map Fields
+                    updateField('Full Name', data.first_name + ' ' + data.last_name);
+                    updateField('Age', age + ' years');
+                    updateField('Height', data.height);
+                    updateField('Weight', data.weight);
+                    updateField('Blood Group', data.blood_group);
+                    updateField('Marital Status', data.marital_status);
+                    updateField('Religion', data.religion);
+                    updateField('Nationality', 'Bangladeshi');
+
+                    updateField('University', 'East West University');
+                    updateField('Department', 'CSE');
+                    updateField('Batch', data.batch_year);
+                    updateField('Profession', data.occupation);
+                    updateField('Company', data.company);
+
+                    updateField('Father', data.father_name);
+                    updateField('Mother', data.mother_name);
+
+                    // Update Header Name (hero section)
+                    const headerName = document.querySelector('.profile-header-info h1');
+                    if (headerName) headerName.textContent = data.first_name + ' ' + data.last_name;
+
+                    // Update page title
+                    document.title = `Profile - ${data.first_name} ${data.last_name} - EWU Matrimony`;
+
+                    // Update meta items in header
+                    const metaItems = document.querySelectorAll('.profile-meta-item');
+                    if (metaItems.length >= 4) {
+                        metaItems[0].innerHTML = metaItems[0].innerHTML.replace(/\d+ years old/, age + ' years old');
+                        metaItems[1].innerHTML = metaItems[1].innerHTML.replace(/5'4".*?\)/, data.height || 'N/A');
+                        metaItems[3].innerHTML = metaItems[3].innerHTML.replace(/CSE.*?\)/, `CSE, EWU (Batch ${data.batch_year})`);
+                    }
+
+                    // Update profile photo
+                    const profilePhoto = document.querySelector('.profile-photo-large img');
+                    if (profilePhoto) {
+                        profilePhoto.src = data.photo
+                            ? (data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo)
+                            : `https://ui-avatars.com/api/?name=${data.first_name}+${data.last_name}&background=random&size=400`;
+                        profilePhoto.alt = data.first_name + ' ' + data.last_name;
+                    }
+
+                    // Update Family Information (by ID)
+                    const setById = (id, value) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = value || '-';
+                    };
+
+                    setById('fatherProfession', data.father_occupation);
+                    setById('motherProfession', data.mother_occupation);
+                    setById('siblings', data.siblings ? data.siblings + ' sibling(s)' : '-');
+                    setById('familyType', data.family_type);
+
+                    // Update Partner Preferences
+                    setById('partnerAge', (data.partner_min_age && data.partner_max_age) ?
+                        `${data.partner_min_age} - ${data.partner_max_age} years` : '-');
+                    setById('partnerHeight', data.partner_min_height);
+                    setById('partnerEducation', data.partner_education);
+                    setById('partnerOccupation', data.partner_occupation);
+                    setById('partnerReligion', data.partner_religion);
+
+                }
+            } catch (e) {
+                console.error('Error loading profile:', e);
+            }
+        }
+
+        // Call it
+        document.addEventListener('DOMContentLoaded', loadProfile);
+    </script>
+</body>
+
+</html>

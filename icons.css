@@ -1,0 +1,178 @@
+/* ===== SVG ICONS ===== */
+/* Use these as inline SVGs or background images */
+
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.icon-sm {
+    width: 16px;
+    height: 16px;
+}
+
+.icon-md {
+    width: 24px;
+    height: 24px;
+}
+
+.icon-lg {
+    width: 32px;
+    height: 32px;
+}
+
+.icon-xl {
+    width: 48px;
+    height: 48px;
+}
+
+/* Feature Icons Container */
+.feature-icon,
+.step-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, rgba(74, 144, 217, 0.1), rgba(74, 144, 217, 0.05));
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+}
+
+.feature-icon svg,
+.step-icon svg {
+    width: 40px;
+    height: 40px;
+    fill: var(--accent);
+}
+
+/* Logo Icon */
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--white);
+}
+
+/* Auth Feature Icons */
+.auth-feature-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-feature-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--white);
+}
+
+/* Contact Item Icons */
+.contact-item-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.contact-item-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--white);
+}
+
+/* Social Links */
+.social-link {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.social-link svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--white);
+}
+
+.social-link:hover {
+    background: var(--accent);
+    transform: translateY(-3px);
+}
+
+/* Input Icons */
+.input-icon {
+    position: absolute;
+    left: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+}
+
+.input-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--gray-400);
+}
+
+/* Button Icons */
+.btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Hero Badge Icon */
+.hero-badge svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+/* Sidebar Card Icons */
+.sidebar-card h4 svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--accent);
+}
+
+/* Profile Section Icons */
+.profile-section h3 svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--accent);
+}
+
+/* EWU Brand Colors */
+:root {
+    --ewu-blue: #003366;
+    --ewu-gold: #FFD700;
+}

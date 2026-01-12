@@ -1,0 +1,1144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Reuse main styles for variables and base -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+
+    <style>
+        /* Admin Specific Overrides */
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--primary-dark);
+            /* Use theme variable */
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+            /* Subtle darkening for header */
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--white);
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+            flex: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.2s;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            border-left-color: var(--secondary);
+            /* Use secondary color for active indicator */
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Main Content */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background);
+            /* Use theme background */
+        }
+
+        .admin-header {
+            height: var(--header-height);
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Cards & Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .bg-blue {
+            background: #3b82f6;
+        }
+
+        .bg-orange {
+            background: #f97316;
+        }
+
+        .bg-green {
+            background: #22c55e;
+        }
+
+        .bg-purple {
+            background: #a855f7;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-info p {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        /* Verification Queue Table */
+        .content-card {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--gray-100);
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--gray-600);
+        }
+
+        .data-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            object-fit: cover;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .status-verified {
+            background: #f0fdf4;
+            color: #15803d;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-check {
+            color: #15803d;
+            background: #f0fdf4;
+        }
+
+        .btn-check:hover {
+            background: #dcfce7;
+        }
+
+        .btn-x {
+            color: #b91c1c;
+            background: #fef2f2;
+        }
+
+        .btn-x:hover {
+            background: #fee2e2;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .detail-row {
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 0.75rem 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            width: 40%;
+        }
+
+        .detail-value {
+            width: 60%;
+        }
+
+        .btn-view {
+            background: #3b82f6;
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-view:hover {
+            background: #2563eb;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            margin-top: 1rem;
+            text-align: right;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Biodata Details Modal -->
+    <div class="modal-overlay" id="biodataModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Biodata Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="biodataDetails">
+                Loading...
+            </div>
+            <div
+                style="padding: 1rem 1.5rem; border-top: 1px solid #eee; display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeModal()">Close</button>
+                <button class="action-btn btn-check" id="modalApproveBtn" style="padding: 0.5rem 1rem;">Approve</button>
+                <button class="action-btn btn-x" id="modalRejectBtn" style="padding: 0.5rem 1rem;">Reject</button>
+            </div>
+        </div>
+    </div>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <span style="color: var(--accent);">?</span>
+                EWU Admin
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="#" class="menu-item active" onclick="switchView('dashboard', this); return false;">
+                <span>ðŸ“Š</span> Dashboard
+            </a>
+            <a href="#" class="menu-item" onclick="switchView('verifications', this); return false;">
+                <span>âœ…</span> Verifications <span
+                    style="margin-left:auto; background:var(--primary); padding:2px 8px; border-radius:10px; font-size:0.7rem;">3</span>
+            </a>
+            <a href="#" class="menu-item" onclick="switchView('messages', this); return false;">
+                <span>ðŸ’¬</span> Messages
+            </a>
+            <a href="#" class="menu-item" onclick="switchView('users', this); return false;">
+                <span>ðŸ‘¥</span> Users
+            </a>
+            <a href="#" class="menu-item" onclick="switchView('blog', this); return false;">
+                <span>ðŸ“</span> Blog CMS
+            </a>
+            <a href="#" class="menu-item" onclick="switchView('settings', this); return false;">
+                <span>âš™ï¸</span> Settings
+            </a>
+            <div style="margin-top: auto; padding-top: 2rem;">
+                <a href="index.html" class="menu-item">
+                    <span>ðŸ </span> Back to Website
+                </a>
+                <a href="#" class="menu-item" onclick="logoutAdmin(); return false;" style="color: #ef4444;">
+                    <span>ðŸšª</span> Logout
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <script>
+        // AUTH CHECK - Redirect if not logged in
+        fetch('api/admin/check_auth.php')
+            .then(res => res.json())
+            .then(data => {
+                if (!data.authenticated) {
+                    window.location.href = 'admin_login.html';
+                }
+            })
+            .catch(() => window.location.href = 'admin_login.html');
+
+        async function logoutAdmin() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            await fetch('api/admin/logout.php');
+            window.location.href = 'admin_login.html';
+        }
+    </script>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <h3>Dashboard Overview</h3>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span style="font-size: 0.9rem; color: var(--gray-600);">Admin User</span>
+                <div
+                    style="width: 35px; height: 35px; background: var(--primary); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    A</div>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="view-section active">
+                <div class="stats-grid">
+                    <div class="stat-card reveal">
+                        <div class="stat-icon bg-blue">ðŸ‘¥</div>
+                        <div class="stat-info">
+                            <h3 id="statTotalUsers">...</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card reveal">
+                        <div class="stat-icon bg-orange">âš ï¸</div>
+                        <div class="stat-info">
+                            <h3 id="statPending">...</h3>
+                            <p>Pending Accounts</p>
+                        </div>
+                    </div>
+                    <div class="stat-card reveal">
+                        <div class="stat-icon bg-green">âœ…</div>
+                        <div class="stat-info">
+                            <h3 id="statVerified">...</h3>
+                            <p>Verified Profiles</p>
+                        </div>
+                    </div>
+                    <div class="stat-card reveal">
+                        <div class="stat-icon bg-purple">â¤ï¸</div>
+                        <div class="stat-info">
+                            <h3 id="statMatches">...</h3>
+                            <p>Total Matches</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">Recent System Logs</div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display:flex; gap:1rem; margin-bottom:1rem; align-items:center;">
+                            <span style="font-size:0.8rem; color:var(--gray-500);">System</span>
+                            <span style="font-size:0.9rem;"><strong>System:</strong> Daily backup completed
+                                successfully.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VERIFICATIONS VIEW -->
+            <div id="view-verifications" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title"> Pending Account Verifications</div>
+                        <button class="btn btn-sm btn-outline"
+                            style="border-color: var(--gray-300); color: var(--gray-600);"
+                            onclick="loadPendingUsers()">Refresh</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User Details</th>
+                                <th>Student ID</th>
+                                <th>Dept / Batch</th>
+                                <th>Uploaded ID</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding:2rem; color:var(--gray-500);">Loading
+                                    pending users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title"> Pending Biodata Verifications</div>
+                        <button class="btn btn-sm btn-outline" onclick="loadPendingBiodatas()"
+                            style="border-color: var(--gray-300); color: var(--gray-600);">Refresh</button>
+                    </div>
+                    <table class="data-table" id="biodataTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Student ID</th>
+                                <th>Occupation</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MESSAGES VIEW -->
+            <div id="view-messages" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">User Inquiries</div>
+                        <button class="btn btn-sm btn-outline"
+                            style="border-color: var(--gray-300); color: var(--gray-600);"
+                            onclick="loadMessages()">Refresh</button>
+                    </div>
+                    <table class="data-table" id="messagesTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Name</th>
+                                <th>Email/Phone</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NEW VIEWS -->
+            <div id="view-users" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">All Users</div>
+                    </div>
+                    <div style="padding:2rem; text-align:center;">User Management Module</div>
+                </div>
+            </div>
+            <div id="view-blog" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">Blog CMS</div>
+                    </div>
+                    <div style="padding:2rem; text-align:center;">Blog Module</div>
+                </div>
+            </div>
+            <div id="view-settings" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">Admin Credentials</div>
+                    </div>
+                    <div style="padding: 2rem; max-width: 400px;">
+                        <form id="credentialsForm" onsubmit="updateCredentials(event)">
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">New
+                                    Username</label>
+                                <input type="text" id="newUsername"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-300); border-radius: 8px;"
+                                    placeholder="Enter new username" required minlength="3">
+                            </div>
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">New Password
+                                    <span style="color: var(--gray-400); font-weight: normal;">(leave blank to keep
+                                        current)</span></label>
+                                <input type="password" id="newPassword"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-300); border-radius: 8px;"
+                                    placeholder="Enter new password" minlength="6">
+                            </div>
+                            <div
+                                style="margin-bottom: 1.5rem; border-top: 1px solid var(--gray-200); padding-top: 1.5rem;">
+                                <label
+                                    style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--primary);">Current
+                                    Password (Required)</label>
+                                <input type="password" id="currentPassword"
+                                    style="width: 100%; padding: 0.75rem; border: 2px solid var(--gray-300); border-radius: 8px;"
+                                    placeholder="Enter current password to confirm" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+                                Update Credentials
+                            </button>
+                        </form>
+                        <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--gray-500);">
+                            ⚠️ You will be logged out after changing credentials.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // View Switching Logic
+        function switchView(viewId, linkElement) {
+            // Update Menu Active State
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            if (linkElement) linkElement.classList.add('active');
+
+            // Update View Visibility
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            const target = document.getElementById('view-' + viewId);
+            if (target) target.style.display = 'block';
+
+            // Update Header Title
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'verifications': 'Verification Queues',
+                'messages': 'User Inquiries',
+                'users': 'User Management',
+                'blog': 'Blog CMS',
+                'settings': 'System Settings'
+            };
+            const titleEl = document.querySelector('.admin-header h3');
+            if (titleEl && titles[viewId]) titleEl.textContent = titles[viewId];
+
+            // Auto-load data based on view
+            if (viewId === 'messages') loadMessages();
+        }
+
+        let currentMessages = [];
+
+        async function loadMessages() {
+            const tbody = document.querySelector('#messagesTable tbody');
+            const thead = document.querySelector('#messagesTable thead tr');
+
+            // Ensure Action column exists
+            if (!thead.querySelector('.col-actions')) {
+                const th = document.createElement('th');
+                th.className = 'col-actions';
+                th.textContent = 'Actions';
+                thead.appendChild(th);
+            }
+
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Loading messages...</td></tr>';
+
+            try {
+                const response = await fetch('api/admin/get_messages.php');
+                const data = await response.json();
+
+                if (data.success && data.messages.length > 0) {
+                    currentMessages = data.messages;
+                    tbody.innerHTML = data.messages.map((msg, index) => `
+                        <tr>
+                            <td>${new Date(msg.submitted_at).toLocaleDateString()}</td>
+                            <td><strong>${msg.name}</strong></td>
+                            <td>
+                                <div>${msg.email}</div>
+                                <div style="font-size:0.8em; color:gray;">${msg.phone}</div>
+                            </td>
+                            <td><span class="status-badge status-pending">${msg.subject}</span></td>
+                            <td class="truncate" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${msg.message.substring(0, 50)}...</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="openMessageModal(${index})">
+                                    ðŸ‘ï¸ View
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">No messages found.</td></tr>';
+                }
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:red;">Error loading messages</td></tr>';
+            }
+        }
+
+        function openMessageModal(index) {
+            const msg = currentMessages[index];
+            if (!msg) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h3>Message Details</h3>
+                        <button onclick="this.closest('.modal-overlay').remove()">Ã—</button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>From:</strong> ${msg.name} (${msg.email})</p>
+                        <p><strong>Phone:</strong> ${msg.phone || 'N/A'}</p>
+                        <p><strong>Subject:</strong> ${msg.subject}</p>
+                        <p><strong>Date:</strong> ${new Date(msg.submitted_at).toLocaleString()}</p>
+                        <hr style="margin: 1rem 0; border:0; border-top:1px solid #eee;">
+                        <div style="background:#f8f9fa; padding:1rem; border-radius:0.5rem; max-height:300px; overflow-y:auto;">
+                            ${msg.message}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Load Pending Users on Page Load
+        async function loadPendingUsers() {
+            try {
+                console.log('Fetching pending users...');
+                const response = await fetch('api/admin/get_pending.php');
+                const text = await response.text();
+                console.log('API Response:', text);
+
+                let users;
+                try {
+                    users = JSON.parse(text);
+                } catch (e) {
+                    console.error('JSON Parse Error:', e);
+                    document.getElementById('usersTableBody').innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">API Error: ${text}</td></tr>`;
+                    return;
+                }
+
+                const tbody = document.getElementById('usersTableBody');
+                tbody.innerHTML = '';
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--gray-500); padding:2rem;">No pending verifications found.</td></tr>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" style="background:#e0e7ff; color:#3730a3; display:flex; align-items:center; justify-content:center; font-weight:bold;">${user.first_name ? user.first_name[0] : '?'}</div>
+                                <div>
+                                    <div style="font-weight:600;">${user.first_name} ${user.last_name}</div>
+                                    <div style="font-size:0.8rem; color:var(--gray-600);">Batch: ${user.batch_year}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.student_id}</td>
+                        <td>${user.status}</td>
+                        <td>
+                            ${user.id_card_image ?
+                            `<a href="${user.id_card_image.startsWith('http') ? user.id_card_image : 'uploads/' + user.id_card_image}" target="_blank" style="color:var(--primary); text-decoration:underline;">View ID</a>` :
+                            '<span style="color:var(--gray-400);">No ID</span>'}
+                        </td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="action-btn btn-check" onclick="verifyUser('${user.student_id}', 'approve', this)" title="Approve">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                                </button>
+                                <button class="action-btn btn-x" onclick="verifyUser('${user.student_id}', 'reject', this)" title="Reject">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+            } catch (e) {
+                console.error("Error loading users", e);
+                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6" style="color:red; text-align:center;">Connection Failed</td></tr>';
+            }
+        }
+
+        async function verifyUser(studentId, action, btn) {
+            const row = btn.closest('tr');
+
+            if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+
+            try {
+                const response = await fetch('api/admin/verify_user.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId, action })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (action === 'approve') {
+                        row.style.background = '#f0fdf4';
+                        row.querySelector('.status-badge').textContent = 'Verified';
+                        row.querySelector('.status-badge').classList.replace('status-pending', 'status-verified');
+                        btn.parentElement.innerHTML = '<span style="color:#15803d; font-size:0.9rem;">Verified </span>';
+                    } else {
+                        row.style.opacity = '0.5';
+                        row.querySelector('.status-badge').textContent = 'Rejected';
+                        btn.parentElement.innerHTML = '<span style="color:#b91c1c; font-size:0.9rem;">Rejected</span>';
+                    }
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error');
+            }
+        }
+
+        // ========== BIODATA VERIFICATION ==========
+        async function loadPendingBiodatas() {
+            try {
+                const response = await fetch('api/admin/get_pending_biodatas.php');
+                const biodatas = await response.json();
+
+                const tbody = document.querySelector('#biodataTable tbody');
+                tbody.innerHTML = '';
+
+                if (biodatas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--gray-500); padding:2rem;">No pending biodata verifications</td></tr>';
+                    return;
+                }
+
+                biodatas.forEach(bio => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" style="background:#fce7f3; color:#db2777; display:flex; align-items:center; justify-content:center; font-weight:bold;">${bio.first_name[0]}</div>
+                                <div>
+                                    <div style="font-weight:600;">${bio.first_name} ${bio.last_name}</div>
+                                    <div style="font-size:0.8rem; color:var(--gray-600);">${bio.gender}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${bio.student_id}</td>
+                        <td>${bio.occupation || 'Not specified'}</td>
+                        <td>${new Date(bio.updated_at).toLocaleDateString()}</td>
+                        <td>
+                            <div style="display:flex; gap:0.5rem;">
+                                <button class="btn-view" onclick="viewBiodataDetails('${bio.student_id}')" title="View Details">View</button>
+                                <button class="action-btn btn-check" onclick="verifyBiodata('${bio.student_id}', 'approve', this)" title="Approve">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+                                </button>
+                                <button class="action-btn btn-x" onclick="verifyBiodata('${bio.student_id}', 'reject', this)" title="Reject">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+            } catch (e) {
+                console.error("Error loading biodatas", e);
+            }
+        }
+
+        async function verifyBiodata(studentId, action, btn) {
+            const row = btn.closest('tr');
+
+            if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
+
+            try {
+                const response = await fetch('api/admin/verify_biodata.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId, action })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (action === 'approve') {
+                        row.style.background = '#f0fdf4';
+                        btn.parentElement.innerHTML = '<span style="color:#15803d; font-size:0.9rem;">Published </span>';
+                    } else {
+                        row.style.opacity = '0.5';
+                        btn.parentElement.innerHTML = '<span style="color:#b91c1c; font-size:0.9rem;">Rejected</span>';
+                    }
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error');
+            }
+        }
+
+        // ========== VIEW BIODATA MODAL ==========
+        let currentBiodataStudentId = null;
+
+        async function viewBiodataDetails(studentId) {
+            currentBiodataStudentId = studentId;
+            document.getElementById('biodataModal').classList.add('active');
+            document.getElementById('biodataDetails').innerHTML = 'Loading...';
+
+            try {
+                const response = await fetch(`api/admin/get_biodata_details.php?student_id=${studentId}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const d = result.data;
+                    document.getElementById('biodataDetails').innerHTML = `
+                        <div style="text-align:center; margin-bottom:1rem;">
+                            <img src="${d.photo ? (d.photo.startsWith('http') ? d.photo : 'uploads/' + d.photo) : 'default.png'}" 
+                                 onerror="this.src='https://ui-avatars.com/api/?name=${d.first_name}+${d.last_name}&size=100'" 
+                                 style="width:100px; height:100px; border-radius:50%; object-fit:cover;">
+                            <h3 style="margin-top:0.5rem;">${d.first_name} ${d.last_name}</h3>
+                            <p style="color:#666;">${d.student_id}</p>
+                        </div>
+                        <hr>
+                        <h4 style="margin:1rem 0 0.5rem;">Personal Information</h4>
+                        <div class="detail-row"><span class="detail-label">Gender</span><span class="detail-value">${d.gender || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Date of Birth</span><span class="detail-value">${d.dob || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Religion</span><span class="detail-value">${d.religion || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${d.phone || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Height</span><span class="detail-value">${d.height || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Weight</span><span class="detail-value">${d.weight || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Skin Tone</span><span class="detail-value">${d.skin_tone || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Blood Group</span><span class="detail-value">${d.blood_group || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Marital Status</span><span class="detail-value">${d.marital_status || '-'}</span></div>
+                        
+                        <h4 style="margin:1rem 0 0.5rem;">Education & Career</h4>
+                        <div class="detail-row"><span class="detail-label">Education</span><span class="detail-value">${d.education || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Occupation</span><span class="detail-value">${d.occupation || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Company</span><span class="detail-value">${d.company || '-'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Income</span><span class="detail-value">${d.income || '-'}</span></div>
+                        
+                        <h4 style="margin:1rem 0 0.5rem;">About</h4>
+                        <p style="background:#f9f9f9; padding:1rem; border-radius:8px;">${d.about_me || 'No description provided.'}</p>
+                    `;
+
+                    // Set up approve/reject buttons
+                    document.getElementById('modalApproveBtn').onclick = () => {
+                        verifyBiodataFromModal('approve');
+                    };
+                    document.getElementById('modalRejectBtn').onclick = () => {
+                        verifyBiodataFromModal('reject');
+                    };
+                } else {
+                    document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Error loading details</p>';
+                }
+            } catch (e) {
+                document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Connection error</p>';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('biodataModal').classList.remove('active');
+        }
+
+        async function verifyBiodataFromModal(action) {
+            if (!currentBiodataStudentId) return;
+            if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
+
+            try {
+                const response = await fetch('api/admin/verify_biodata.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ studentId: currentBiodataStudentId, action })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`Biodata ${action}d successfully!`);
+                    closeModal();
+                    loadPendingBiodatas();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error');
+            }
+        }
+
+        // Load real stats
+        async function loadStats() {
+            try {
+                const response = await fetch('api/admin/stats.php');
+                const result = await response.json();
+
+                if (result.success) {
+                    const s = result.stats;
+                    document.getElementById('statTotalUsers').textContent = s.total_users;
+                    document.getElementById('statPending').textContent = s.pending_accounts;
+                    document.getElementById('statVerified').textContent = s.verified_biodatas;
+                    document.getElementById('statMatches').textContent = s.total_matches;
+                }
+            } catch (e) {
+                console.error('Error loading stats:', e);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPendingUsers();
+            loadPendingBiodatas();
+            loadStats(); // Add this
+        });
+
+        // Update Admin Credentials
+        async function updateCredentials(event) {
+            event.preventDefault();
+
+            const newUsername = document.getElementById('newUsername').value.trim();
+            const newPassword = document.getElementById('newPassword').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+
+            if (!newUsername || newUsername.length < 3) {
+                alert('Username must be at least 3 characters');
+                return;
+            }
+
+            if (newPassword && newPassword.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+
+            if (!currentPassword) {
+                alert('Please enter your current password to confirm changes');
+                return;
+            }
+
+            try {
+                const response = await fetch('api/admin/update_credentials.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_username: newUsername,
+                        new_password: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    if (result.logout) {
+                        window.location.href = 'admin_login.html';
+                    }
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error. Please try again.');
+            }
+        }
+    </script>
+</body>
+
+</html>
+```

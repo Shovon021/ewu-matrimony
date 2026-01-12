@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shortlist - EWU Matrimony</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="components.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="icons.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header header-solid" id="header">
+        <div class="container">
+            <nav class="nav">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <span>EWU Matrimony</span>
+                </a>
+                <div class="nav-buttons">
+                    <!-- Theme Toggle Removed -->
+                    <a href="search.html" class="btn btn-outline-dark">Search</a>
+                    <a href="matches.html" class="btn btn-outline-dark">Matches</a>
+                    <a href="profile.html" class="btn btn-outline-dark">My Profile</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="search-page">
+        <div class="container">
+            <div class="page-header" style="text-align:center; margin-bottom:3rem;">
+                <h1>ðŸŒŸ My Shortlist</h1>
+                <p>Profiles you have favorited for later.</p>
+            </div>
+
+            <div id="favoritesGrid"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem;">
+                <!-- Favorites loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="components.js"></script>
+    <script src="script.js"></script>
+    <script>
+        async function loadFavorites() {
+            const grid = document.getElementById('favoritesGrid');
+            grid.innerHTML = '<div class="loading-state" style="grid-column: span 3; text-align:center; padding:3rem;"><p>Loading favorites...</p></div>';
+
+            try {
+                const response = await fetch('api/favorites/list.php');
+                const result = await response.json();
+
+                if (!result.success || result.favorites.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: span 3; text-align:center; padding:4rem;">
+                            <h3 style="color:var(--gray-500);">No favorites yet</h3>
+                            <p style="color:var(--gray-400);">Go to Search and click the star icon to shortlist profiles.</p>
+                            <a href="search.html" class="btn btn-primary" style="margin-top:1rem;">Browse Profiles</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = '';
+                result.favorites.forEach(profile => {
+                    const photoSrc = profile.photo
+                        ? (profile.photo.startsWith('http') ? profile.photo : `uploads/${profile.photo}`)
+                        : `https://ui-avatars.com/api/?name=${profile.first_name}+${profile.last_name}&background=random&size=400`;
+
+                    const card = document.createElement('div');
+                    card.className = 'profile-card';
+                    card.innerHTML = `
+                        <div class="profile-image">
+                            <img src="${photoSrc}" alt="${profile.first_name}">
+                        </div>
+                        <div class="profile-info">
+                            <h4>${profile.first_name} ${profile.last_name}</h4>
+                            <p class="profile-details">${profile.occupation || 'EWU Student'}</p>
+                            <p class="profile-education">Batch ${profile.batch_year || 'N/A'}</p>
+                            <div class="profile-actions">
+                                <a href="profile.html?id=${profile.id}" class="btn btn-primary btn-sm">View Profile</a>
+                                <button class="btn-icon" onclick="removeFavorite(${profile.id}, this)" title="Remove from Favorites" style="color:#f59e0b;">
+                                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (e) {
+                console.error('Error loading favorites:', e);
+                grid.innerHTML = '<p style="text-align:center; color:red;">Error loading favorites.</p>';
+            }
+        }
+
+        async function removeFavorite(userId, btn) {
+            try {
+                const response = await fetch('api/favorites/add.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const result = await response.json();
+
+                if (result.success && result.action === 'removed') {
+                    Toast.success('Removed', 'Profile removed from favorites');
+                    btn.closest('.profile-card').remove();
+
+                    if (document.querySelectorAll('.profile-card').length === 0) {
+                        loadFavorites(); // Show empty state
+                    }
+                }
+            } catch (e) {
+                console.error('Error removing favorite:', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadFavorites);
+    </script>
+</body>
+
+</html>

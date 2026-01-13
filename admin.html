@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -385,38 +385,36 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <span style="color: var(--accent);">?</span>
-                EWU Admin
-            </div>
+            <span style="color: var(--accent);">&#128141;</span>
+            EWU Admin
         </div>
 
         <nav class="sidebar-menu">
             <a href="#" class="menu-item active" onclick="switchView('dashboard', this); return false;">
-                <span>ðŸ“Š</span> Dashboard
+                <span>&#128202;</span> Dashboard
             </a>
             <a href="#" class="menu-item" onclick="switchView('verifications', this); return false;">
-                <span>âœ…</span> Verifications <span
+                <span>&#9989;</span> Verifications <span
                     style="margin-left:auto; background:var(--primary); padding:2px 8px; border-radius:10px; font-size:0.7rem;">3</span>
             </a>
             <a href="#" class="menu-item" onclick="switchView('messages', this); return false;">
-                <span>ðŸ’¬</span> Messages
+                <span>&#128172;</span> Messages
             </a>
             <a href="#" class="menu-item" onclick="switchView('users', this); return false;">
-                <span>ðŸ‘¥</span> Users
+                <span>&#128101;</span> Users
             </a>
             <a href="#" class="menu-item" onclick="switchView('blog', this); return false;">
-                <span>ðŸ“</span> Blog CMS
+                <span>&#128196;</span> Blog CMS
             </a>
             <a href="#" class="menu-item" onclick="switchView('settings', this); return false;">
-                <span>âš™ï¸</span> Settings
+                <span>&#9881;</span> Settings
             </a>
             <div style="margin-top: auto; padding-top: 2rem;">
                 <a href="index.html" class="menu-item">
-                    <span>ðŸ </span> Back to Website
+                    <span>&#127968;</span> Back to Website
                 </a>
                 <a href="#" class="menu-item" onclick="logoutAdmin(); return false;" style="color: #ef4444;">
-                    <span>ðŸšª</span> Logout
+                    <span>&#128682;</span> Logout
                 </a>
             </div>
         </nav>
@@ -455,28 +453,28 @@
             <div id="view-dashboard" class="view-section active">
                 <div class="stats-grid">
                     <div class="stat-card reveal">
-                        <div class="stat-icon bg-blue">ðŸ‘¥</div>
+                        <div class="stat-icon bg-blue">&#128101;</div>
                         <div class="stat-info">
                             <h3 id="statTotalUsers">...</h3>
                             <p>Total Users</p>
                         </div>
                     </div>
                     <div class="stat-card reveal">
-                        <div class="stat-icon bg-orange">âš ï¸</div>
+                        <div class="stat-icon bg-orange">&#9888;</div>
                         <div class="stat-info">
                             <h3 id="statPending">...</h3>
                             <p>Pending Accounts</p>
                         </div>
                     </div>
                     <div class="stat-card reveal">
-                        <div class="stat-icon bg-green">âœ…</div>
+                        <div class="stat-icon bg-green">&#9989;</div>
                         <div class="stat-info">
                             <h3 id="statVerified">...</h3>
                             <p>Verified Profiles</p>
                         </div>
                     </div>
                     <div class="stat-card reveal">
-                        <div class="stat-icon bg-purple">â¤ï¸</div>
+                        <div class="stat-icon bg-purple">&#128151;</div>
                         <div class="stat-info">
                             <h3 id="statMatches">...</h3>
                             <p>Total Matches</p>
@@ -700,7 +698,7 @@
                             <td class="truncate" style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${msg.message.substring(0, 50)}...</td>
                             <td>
                                 <button class="btn btn-sm btn-outline" onclick="openMessageModal(${index})">
-                                    ðŸ‘ï¸ View
+                                    &#128065; View
                                 </button>
                             </td>
                         </tr>

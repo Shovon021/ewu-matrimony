@@ -161,7 +161,7 @@
     <script>
         // Version 6: Real + Simulated Growth
         document.addEventListener('DOMContentLoaded', () => {
-            fetch('api/public/stats.php')
+            fetch('api/public?action=stats')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.data) {

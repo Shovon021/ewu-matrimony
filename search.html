@@ -377,7 +377,7 @@
                 const minAge = minAgeInput.value;
                 const maxAge = maxAgeInput.value;
 
-                const response = await fetch(`api/search/get_verified.php?gender=${gender}&religion=${religion}&min_age=${minAge}&max_age=${maxAge}`);
+                const response = await fetch(`api/search?gender=${gender}&religion=${religion}&min_age=${minAge}&max_age=${maxAge}`);
                 const profiles = await response.json();
 
                 // Update count
@@ -461,7 +461,7 @@
                 btn.disabled = true;
                 btn.innerHTML = '...';
 
-                const response = await fetch('api/interest/send.php', {
+                const response = await fetch('api/interest?action=send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ to_user_id: userId })
@@ -492,7 +492,7 @@
 
         async function toggleFavorite(userId, btn) {
             try {
-                const response = await fetch('api/favorites/add.php', {
+                const response = await fetch('api/favorites?action=add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }, // Added headers for JSON body
                     body: JSON.stringify({ user_id: userId })

@@ -1,8 +1,10 @@
-import { query } from '../_lib/db.js';
+import { query } from './_lib/db.js';
 
+// Search API - handles verified profile search
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
@@ -13,13 +15,13 @@ export default async function handler(req, res) {
 
     try {
         let sql = `
-      SELECT 
-        u.id, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year, u.status,
-        p.height, p.occupation, p.education, p.location, p.photo
-      FROM users u
-      LEFT JOIN profiles p ON u.id = p.user_id
-      WHERE u.verification_status = 'verified'
-    `;
+            SELECT 
+                u.id, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year, u.status,
+                p.height, p.occupation, p.education, p.location, p.photo
+            FROM users u
+            LEFT JOIN profiles p ON u.id = p.user_id
+            WHERE u.verification_status = 'verified'
+        `;
         const params = [];
 
         if (gender) {
@@ -38,10 +40,10 @@ export default async function handler(req, res) {
         sql += ' ORDER BY u.created_at DESC LIMIT 50';
 
         const users = await query(sql, params);
-        res.status(200).json({ success: true, data: users });
+        return res.status(200).json({ success: true, data: users });
 
     } catch (error) {
         console.error('Search error:', error);
-        res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ success: false, error: error.message });
     }
 }

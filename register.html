@@ -491,9 +491,14 @@
                 nextBtn.disabled = true;
                 nextBtn.textContent = 'Creating Account...';
 
-                fetch('api/auth/register', {
+                // Convert FormData to JSON object for the API
+                const jsonData = {};
+                formData.forEach((value, key) => { jsonData[key] = value; });
+
+                fetch('api/auth?action=register', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
                 })
                     .then(async response => {
                         const text = await response.text();

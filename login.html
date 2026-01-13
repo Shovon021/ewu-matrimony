@@ -227,9 +227,10 @@
                     formData.append('password', password);
 
                     try {
-                        const response = await fetch('api/auth/login', {
+                        const response = await fetch('api/auth?action=login', {
                             method: 'POST',
-                            body: formData
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ student_id: studentId, password: password })
                         });
 
                         const result = await response.json();

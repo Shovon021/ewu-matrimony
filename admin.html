@@ -719,7 +719,7 @@
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Loading messages...</td></tr>';
 
             try {
-                const response = await fetch('api/admin/get_messages');
+                const response = await fetch('api/admin?action=get_messages');
                 const data = await response.json();
 
                 if (data.success && data.messages.length > 0) {
@@ -783,7 +783,7 @@
         async function loadPendingUsers() {
             try {
                 console.log('Fetching pending users...');
-                const response = await fetch('api/admin/get_pending');
+                const response = await fetch('api/admin?action=get_pending');
                 const text = await response.text();
                 console.log('API Response:', text);
 
@@ -850,7 +850,7 @@
             if (!confirm(`Are you sure you want to ${action} this user?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_user', {
+                const response = await fetch('api/admin?action=verify_user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId, action })
@@ -880,7 +880,7 @@
         // ========== BIODATA VERIFICATION ==========
         async function loadPendingBiodatas() {
             try {
-                const response = await fetch('api/admin/get_pending_biodatas');
+                const response = await fetch('api/admin?action=get_pending_biodatas');
                 const biodatas = await response.json();
 
                 const tbody = document.querySelector('#biodataTable tbody');
@@ -932,7 +932,7 @@
             if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_biodata', {
+                const response = await fetch('api/admin?action=verify_biodata', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId, action })
@@ -965,7 +965,7 @@
             document.getElementById('biodataDetails').innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`api/admin/get_biodata_details?student_id=${studentId}`);
+                const response = await fetch(`api/admin?action=get_biodata_details&student_id=${studentId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -1024,7 +1024,7 @@
             if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_biodata', {
+                const response = await fetch('api/admin?action=verify_biodata', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId: currentBiodataStudentId, action })
@@ -1046,7 +1046,7 @@
         // Load real stats
         async function loadStats() {
             try {
-                const response = await fetch('api/admin/stats');
+                const response = await fetch('api/admin?action=stats');
                 const result = await response.json();
 
                 if (result.success) {
@@ -1092,7 +1092,7 @@
             }
 
             try {
-                const response = await fetch('api/admin/update_credentials', {
+                const response = await fetch('api/admin?action=update_credentials', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

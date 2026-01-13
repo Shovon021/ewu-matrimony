@@ -2,7 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.js",
+      "src": "api/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/_lib/*.js",
       "use": "@vercel/node"
     },
     {
@@ -36,8 +40,36 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "/api/admin",
+      "dest": "/api/admin.js"
+    },
+    {
+      "src": "/api/auth",
+      "dest": "/api/auth.js"
+    },
+    {
+      "src": "/api/profile",
+      "dest": "/api/profile.js"
+    },
+    {
+      "src": "/api/chat",
+      "dest": "/api/chat.js"
+    },
+    {
+      "src": "/api/favorites",
+      "dest": "/api/favorites.js"
+    },
+    {
+      "src": "/api/interest",
+      "dest": "/api/interest.js"
+    },
+    {
+      "src": "/api/public",
+      "dest": "/api/public.js"
+    },
+    {
+      "src": "/api/search",
+      "dest": "/api/search.js"
     },
     {
       "handle": "filesystem"

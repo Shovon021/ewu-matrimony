@@ -31,7 +31,14 @@ error_reporting(0);
 // TiDB Cloud requires SSL - use mysqli_real_connect with SSL flag
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-$connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+
+try {
+    $connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+} catch (Exception $e) {
+    if ($conn) $conn->close();
+    echo json_encode(['success' => false, 'error' => 'Database exception: ' . $e->getMessage()]);
+    exit;
+}
 
 error_reporting(E_ALL);
 

@@ -18,11 +18,29 @@ if (strpos($db_host_raw, ':') !== false) {
 // TiDB Cloud requires SSL - use mysqli_real_connect with SSL flag
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-$connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+
+try {
+    $connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+} catch (Exception $e) {
+    // If this is an API request, return JSON
+    if (strpos($_SERVER['SCRIPT_NAME'], '/api/') !== false) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Database connection exception: ' . $e->getMessage()]);
+    } else {
+        echo "Database connection exception: " . $e->getMessage();
+    }
+    exit;
+}
 
 // Check connection
 if (!$connected || $conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    if (strpos($_SERVER['SCRIPT_NAME'], '/api/') !== false) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . $conn->connect_error]);
+    } else {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    exit;
 }
 
 // Select database if it exists, otherwise we might be in setup mode

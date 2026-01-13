@@ -19,347 +19,352 @@
     <link rel="stylesheet" href="components.css">
 
     <style>
-        /* Admin Specific Overrides */
+        /* Professional Admin Dashboard Styling */
         :root {
             --sidebar-width: 280px;
             --header-height: 70px;
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            background-color: var(--gray-100);
+            background-color: #f3f4f6;
             display: flex;
             min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #1f2937;
         }
 
-        /* Sidebar */
+        /* Sidebar Styling */
         .admin-sidebar {
             width: var(--sidebar-width);
-            background: var(--primary-dark);
-            /* Use theme variable */
-            color: #fff;
+            background: var(--primary-gradient);
+            color: white;
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            z-index: 100;
+            z-index: 50;
             display: flex;
             flex-direction: column;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
         }
 
         .sidebar-header {
             height: var(--header-height);
             display: flex;
             align-items: center;
-            padding: 0 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.1);
-            /* Subtle darkening for header */
-        }
-
-        .sidebar-logo {
-            font-family: var(--font-heading);
-            font-size: 1.25rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--white);
-        }
-
-        .sidebar-menu {
-            padding: 1.5rem 0;
-            flex: 1;
-        }
-
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            transition: all 0.2s;
-            text-decoration: none;
-            border-left: 3px solid transparent;
-        }
-
-        .menu-item:hover,
-        .menu-item.active {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-
-        .menu-item.active {
-            border-left-color: var(--secondary);
-            /* Use secondary color for active indicator */
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Main Content */
-        .admin-main {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--background);
-            /* Use theme background */
-        }
-
-        .admin-header {
-            height: var(--header-height);
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding: 0 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 90;
-            box-shadow: var(--shadow-sm);
-        }
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-        .admin-content {
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+            .sidebar-logo {
+                font-family: var(--font-heading);
+                font-size: 1.25rem;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                color: var(--white);
+            }
 
-        /* Cards & Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
+            .sidebar-menu {
+                padding: 1.5rem 0;
+                flex: 1;
+            }
 
-        .stat-card {
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
+            .menu-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 0.75rem 1.5rem;
+                color: rgba(255, 255, 255, 0.8);
+                transition: all 0.2s;
+                text-decoration: none;
+                border-left: 3px solid transparent;
+            }
 
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #fff;
-        }
+            .menu-item:hover,
+            .menu-item.active {
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+            }
 
-        .bg-blue {
-            background: #3b82f6;
-        }
+            .menu-item.active {
+                border-left-color: var(--secondary);
+                /* Use secondary color for active indicator */
+                background: rgba(255, 255, 255, 0.15);
+            }
 
-        .bg-orange {
-            background: #f97316;
-        }
+            /* Main Content */
+            .admin-main {
+                margin-left: var(--sidebar-width);
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                background-color: var(--background);
+                /* Use theme background */
+            }
 
-        .bg-green {
-            background: #22c55e;
-        }
+            .admin-header {
+                height: var(--header-height);
+                background: var(--white);
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 2rem;
+                position: sticky;
+                top: 0;
+                z-index: 90;
+                box-shadow: var(--shadow-sm);
+            }
 
-        .bg-purple {
-            background: #a855f7;
-        }
+            .admin-content {
+                padding: 2rem;
+                max-width: 1400px;
+                margin: 0 auto;
+                width: 100%;
+            }
 
-        .stat-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.25rem;
-        }
+            /* Cards & Stats */
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
 
-        .stat-info p {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            margin: 0;
-        }
+            .stat-card {
+                background: #fff;
+                padding: 1.5rem;
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-sm);
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+            }
 
-        /* Verification Queue Table */
-        .content-card {
-            background: #fff;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                color: #fff;
+            }
 
-        .card-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+            .bg-blue {
+                background: #3b82f6;
+            }
 
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
+            .bg-orange {
+                background: #f97316;
+            }
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+            .bg-green {
+                background: #22c55e;
+            }
 
-        .data-table th {
-            background: var(--gray-100);
-            padding: 1rem 1.5rem;
-            text-align: left;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--gray-600);
-        }
+            .bg-purple {
+                background: #a855f7;
+            }
 
-        .data-table td {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            font-size: 0.9rem;
-        }
+            .stat-info h3 {
+                font-size: 1.5rem;
+                margin-bottom: 0.25rem;
+            }
 
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
+            .stat-info p {
+                color: var(--gray-600);
+                font-size: 0.875rem;
+                margin: 0;
+            }
 
-        .user-cell {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+            /* Verification Queue Table */
+            .content-card {
+                background: #fff;
+                border-radius: var(--radius-lg);
+                box-shadow: var(--shadow-sm);
+                overflow: hidden;
+                margin-bottom: 2rem;
+            }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--gray-300);
-            object-fit: cover;
-        }
+            .card-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--gray-200);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
 
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
+            .card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
 
-        .status-pending {
-            background: #fff7ed;
-            color: #c2410c;
-        }
+            .data-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
 
-        .status-verified {
-            background: #f0fdf4;
-            color: #15803d;
-        }
+            .data-table th {
+                background: var(--gray-100);
+                padding: 1rem 1.5rem;
+                text-align: left;
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                color: var(--gray-600);
+            }
 
-        .action-btn {
-            padding: 0.5rem;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
+            .data-table td {
+                padding: 1rem 1.5rem;
+                border-bottom: 1px solid var(--gray-200);
+                font-size: 0.9rem;
+            }
 
-        .btn-check {
-            color: #15803d;
-            background: #f0fdf4;
-        }
+            .data-table tr:last-child td {
+                border-bottom: none;
+            }
 
-        .btn-check:hover {
-            background: #dcfce7;
-        }
+            .user-cell {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
 
-        .btn-x {
-            color: #b91c1c;
-            background: #fef2f2;
-        }
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--gray-300);
+                object-fit: cover;
+            }
 
-        .btn-x:hover {
-            background: #fee2e2;
-        }
+            .status-badge {
+                padding: 0.25rem 0.75rem;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
 
-        /* Modal Styles */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
+            .status-pending {
+                background: #fff7ed;
+                color: #c2410c;
+            }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+            .status-verified {
+                background: #f0fdf4;
+                color: #15803d;
+            }
 
-        .modal-content {
-            background: #fff;
-            border-radius: 12px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
+            .action-btn {
+                padding: 0.5rem;
+                border-radius: 6px;
+                transition: all 0.2s;
+            }
 
-        .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+            .btn-check {
+                color: #15803d;
+                background: #f0fdf4;
+            }
 
-        .modal-body {
-            padding: 1.5rem;
-        }
+            .btn-check:hover {
+                background: #dcfce7;
+            }
 
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #666;
-        }
+            .btn-x {
+                color: #b91c1c;
+                background: #fef2f2;
+            }
 
-        .detail-row {
-            display: flex;
-            border-bottom: 1px solid #f0f0f0;
-            padding: 0.75rem 0;
-        }
+            .btn-x:hover {
+                background: #fee2e2;
+            }
 
-        .detail-label {
-            font-weight: 600;
-            color: #666;
-            width: 40%;
-        }
+            /* Modal Styles */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+            }
 
-        .detail-value {
-            width: 60%;
-        }
+            .modal-overlay.active {
+                display: flex;
+            }
 
-        .btn-view {
-            background: #3b82f6;
-            color: #fff;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            border: none;
-            cursor: pointer;
-        }
+            .modal-content {
+                background: #fff;
+                border-radius: 12px;
+                max-width: 600px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
 
-        .btn-view:hover {
-            background: #2563eb;
-        }
+            .modal-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: #666;
+            }
+
+            .detail-row {
+                display: flex;
+                border-bottom: 1px solid #f0f0f0;
+                padding: 0.75rem 0;
+            }
+
+            .detail-label {
+                font-weight: 600;
+                color: #666;
+                width: 40%;
+            }
+
+            .detail-value {
+                width: 60%;
+            }
+
+            .btn-view {
+                background: #3b82f6;
+                color: #fff;
+                padding: 0.4rem 0.8rem;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                border: none;
+                cursor: pointer;
+            }
+
+            .btn-view:hover {
+                background: #2563eb;
+            }
     </style>
 </head>
 
@@ -681,7 +686,7 @@
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem;">Loading messages...</td></tr>';
 
             try {
-                const response = await fetch('api/admin/get_messages.php');
+                const response = await fetch('api/admin/get_messages');
                 const data = await response.json();
 
                 if (data.success && data.messages.length > 0) {
@@ -745,7 +750,7 @@
         async function loadPendingUsers() {
             try {
                 console.log('Fetching pending users...');
-                const response = await fetch('api/admin/get_pending.php');
+                const response = await fetch('api/admin/get_pending');
                 const text = await response.text();
                 console.log('API Response:', text);
 
@@ -812,7 +817,7 @@
             if (!confirm(`Are you sure you want to ${action} this user?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_user.php', {
+                const response = await fetch('api/admin/verify_user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId, action })
@@ -842,7 +847,7 @@
         // ========== BIODATA VERIFICATION ==========
         async function loadPendingBiodatas() {
             try {
-                const response = await fetch('api/admin/get_pending_biodatas.php');
+                const response = await fetch('api/admin/get_pending_biodatas');
                 const biodatas = await response.json();
 
                 const tbody = document.querySelector('#biodataTable tbody');
@@ -894,7 +899,7 @@
             if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_biodata.php', {
+                const response = await fetch('api/admin/verify_biodata', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId, action })
@@ -927,7 +932,7 @@
             document.getElementById('biodataDetails').innerHTML = 'Loading...';
 
             try {
-                const response = await fetch(`api/admin/get_biodata_details.php?student_id=${studentId}`);
+                const response = await fetch(`api/admin/get_biodata_details?student_id=${studentId}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -986,7 +991,7 @@
             if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
 
             try {
-                const response = await fetch('api/admin/verify_biodata.php', {
+                const response = await fetch('api/admin/verify_biodata', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ studentId: currentBiodataStudentId, action })
@@ -1008,7 +1013,7 @@
         // Load real stats
         async function loadStats() {
             try {
-                const response = await fetch('api/admin/stats.php');
+                const response = await fetch('api/admin/stats');
                 const result = await response.json();
 
                 if (result.success) {
@@ -1054,7 +1059,7 @@
             }
 
             try {
-                const response = await fetch('api/admin/update_credentials.php', {
+                const response = await fetch('api/admin/update_credentials', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

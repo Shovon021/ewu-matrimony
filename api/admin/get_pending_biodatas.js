@@ -1,0 +1,29 @@
+import { query } from '../_lib/db.js';
+
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Content-Type', 'application/json');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    try {
+        const biodatas = await query(`
+      SELECT 
+        u.student_id, u.first_name, u.last_name, u.gender, u.batch_year, u.status as student_status,
+        p.photo, p.occupation, p.biodata_status, p.updated_at
+      FROM users u
+      INNER JOIN profiles p ON u.id = p.user_id
+      WHERE p.biodata_status = 'pending'
+      ORDER BY p.updated_at DESC
+    `);
+
+        res.status(200).json(biodatas);
+
+    } catch (error) {
+        console.error('Get pending biodatas error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}

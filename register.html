@@ -491,7 +491,7 @@
                 nextBtn.disabled = true;
                 nextBtn.textContent = 'Creating Account...';
 
-                fetch('api/auth/register.php', {
+                fetch('api/auth/register', {
                     method: 'POST',
                     body: formData
                 })

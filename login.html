@@ -227,7 +227,7 @@
                     formData.append('password', password);
 
                     try {
-                        const response = await fetch('api/auth/login.php', {
+                        const response = await fetch('api/auth/login', {
                             method: 'POST',
                             body: formData
                         });

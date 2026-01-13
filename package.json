@@ -1,0 +1,12 @@
+{
+    "name": "ewu-matrimony-api",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "mysql2": "^3.6.5",
+        "cloudinary": "^1.41.0",
+        "formidable": "^3.5.1",
+        "bcryptjs": "^2.4.3"
+    }
+}

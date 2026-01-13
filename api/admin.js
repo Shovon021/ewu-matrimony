@@ -70,33 +70,37 @@ async function handleLogin(req, res) {
 
 // ========== STATS ==========
 async function handleStats(req, res) {
-    const totalUsersResult = await query('SELECT COUNT(*) as count FROM users');
-    const totalUsers = totalUsersResult[0]?.count || 0;
-
-    const pendingResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'pending'");
-    const pending = pendingResult[0]?.count || 0;
-
-    const verifiedResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified'");
-    const verified = verifiedResult[0]?.count || 0;
-
-    let matches = 0;
     try {
-        const matchesResult = await query("SELECT COUNT(*) as count FROM interests WHERE status = 'accepted'");
-        matches = matchesResult[0]?.count || 0;
-    } catch (e) {
-        // interests table might not exist or have different schema
-        matches = 0;
-    }
+        const totalUsersResult = await query('SELECT COUNT(*) as count FROM users');
+        const totalUsers = totalUsersResult[0]?.count || 0;
 
-    return res.status(200).json({
-        success: true,
-        stats: {
-            total_users: totalUsers,
-            pending_accounts: pending,
-            verified_biodatas: verified,
-            total_matches: matches
+        const pendingResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'pending'");
+        const pending = pendingResult[0]?.count || 0;
+
+        const verifiedResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified'");
+        const verified = verifiedResult[0]?.count || 0;
+
+        let matches = 0;
+        try {
+            const matchesResult = await query("SELECT COUNT(*) as count FROM interests WHERE status = 'accepted'");
+            matches = matchesResult[0]?.count || 0;
+        } catch (e) {
+            matches = 0;
         }
-    });
+
+        return res.status(200).json({
+            success: true,
+            stats: {
+                total_users: totalUsers,
+                pending_accounts: pending,
+                verified_biodatas: verified,
+                total_matches: matches
+            }
+        });
+    } catch (e) {
+        console.error('Stats error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }
 
 // ========== GET PENDING USERS ==========
@@ -145,13 +149,18 @@ async function handleGetBiodataDetails(req, res) {
         return res.status(400).json({ success: false, message: 'Student ID required' });
     }
 
-    const users = await query('SELECT * FROM users WHERE student_id = ?', [studentId]);
-    if (users.length === 0) {
-        return res.status(404).json({ success: false, message: 'User not found' });
-    }
+    try {
+        const users = await query('SELECT * FROM users WHERE student_id = ?', [studentId]);
+        if (users.length === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
-    const { password, ...safeUser } = users[0];
-    return res.status(200).json({ success: true, data: safeUser });
+        const { password, ...safeUser } = users[0];
+        return res.status(200).json({ success: true, data: safeUser });
+    } catch (e) {
+        console.error('Get biodata error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }
 
 // ========== VERIFY USER ==========
@@ -165,10 +174,15 @@ async function handleVerifyUser(req, res) {
         return res.status(400).json({ success: false, message: 'Student ID and action required' });
     }
 
-    const status = action === 'approve' ? 'verified' : 'rejected';
-    await execute('UPDATE users SET verification_status = ? WHERE student_id = ?', [status, studentId]);
+    try {
+        const status = action === 'approve' ? 'verified' : 'rejected';
+        await execute('UPDATE users SET verification_status = ? WHERE student_id = ?', [status, studentId]);
 
-    return res.status(200).json({ success: true, message: `User ${status} successfully` });
+        return res.status(200).json({ success: true, message: `User ${status} successfully` });
+    } catch (e) {
+        console.error('Verify user error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }
 
 // ========== VERIFY BIODATA ==========
@@ -182,21 +196,32 @@ async function handleVerifyBiodata(req, res) {
         return res.status(400).json({ success: false, message: 'Student ID and action required' });
     }
 
-    const status = action === 'approve' ? 'verified' : 'rejected';
-    await execute('UPDATE users SET biodata_status = ? WHERE student_id = ?', [status, studentId]);
+    try {
+        const status = action === 'approve' ? 'verified' : 'rejected';
+        await execute('UPDATE users SET biodata_status = ? WHERE student_id = ?', [status, studentId]);
 
-    return res.status(200).json({ success: true, message: `Biodata ${status} successfully` });
+        return res.status(200).json({ success: true, message: `Biodata ${status} successfully` });
+    } catch (e) {
+        console.error('Verify biodata error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }
 
 // ========== GET MESSAGES ==========
 async function handleGetMessages(req, res) {
-    const messages = await query(`
-        SELECT id, name, email, subject, message, created_at
-        FROM contact_messages
-        ORDER BY created_at DESC
-        LIMIT 50
-    `);
-    return res.status(200).json({ success: true, messages });
+    try {
+        const messages = await query(`
+            SELECT id, name, email, subject, message, created_at
+            FROM contact_messages
+            ORDER BY created_at DESC
+            LIMIT 50
+        `);
+        return res.status(200).json({ success: true, messages });
+    } catch (e) {
+        console.error('Get messages error:', e);
+        // Return empty array on error so UI doesn't crash
+        return res.status(200).json({ success: true, messages: [] });
+    }
 }
 
 // ========== UPDATE CREDENTIALS ==========

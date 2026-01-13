@@ -22,8 +22,8 @@ $username = $data['username'] ?? '';
 $password = $data['password'] ?? '';
 
 // Default Credentials
-$stored_username = getenv('ADMIN_USERNAME') ?: 'Rukeeey';
-$stored_password = getenv('ADMIN_PASSWORD') ?: 'Rukeeey@143';
+$stored_username = getenv('ADMIN_USERNAME') ?: 'admin';
+$stored_password = getenv('ADMIN_PASSWORD') ?: 'Rukeeey';
 
 // Try to override from config file if exists (silently ignore errors)
 $config_file = __DIR__ . '/../../config/admin_config.json';

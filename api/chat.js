@@ -41,7 +41,7 @@ async function handleSend(req, res) {
     }
 
     await execute(
-        'INSERT INTO messages (sender_id, receiver_id, message, created_at) VALUES (?, ?, ?, NOW())',
+        'INSERT INTO messages (from_user_id, to_user_id, message, created_at) VALUES (?, ?, ?, NOW())',
         [sender_id, receiver_id, message]
     );
 
@@ -61,9 +61,9 @@ async function handleGet(req, res) {
             s.first_name as sender_name,
             r.first_name as receiver_name
         FROM messages m
-        LEFT JOIN users s ON m.sender_id = s.id
-        LEFT JOIN users r ON m.receiver_id = r.id
-        WHERE (m.sender_id = ? AND m.receiver_id = ?) OR (m.sender_id = ? AND m.receiver_id = ?)
+        LEFT JOIN users s ON m.from_user_id = s.id
+        LEFT JOIN users r ON m.to_user_id = r.id
+        WHERE (m.from_user_id = ? AND m.to_user_id = ?) OR (m.from_user_id = ? AND m.to_user_id = ?)
         ORDER BY m.created_at ASC
     `, [user_id, partner_id, partner_id, user_id]);
 

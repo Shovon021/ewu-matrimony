@@ -81,9 +81,10 @@ async function handleStats(req, res) {
 
     let matches = 0;
     try {
-        const matchesResult = await query("SELECT COUNT(*) as count FROM interests WHERE status = 'matched'");
+        const matchesResult = await query("SELECT COUNT(*) as count FROM interests WHERE status = 'accepted'");
         matches = matchesResult[0]?.count || 0;
     } catch (e) {
+        // interests table might not exist or have different schema
         matches = 0;
     }
 
@@ -100,24 +101,35 @@ async function handleStats(req, res) {
 
 // ========== GET PENDING USERS ==========
 async function handleGetPending(req, res) {
-    const users = await query(`
-        SELECT student_id, first_name, last_name, status, batch_year, id_card_image 
-        FROM users 
-        WHERE verification_status = 'pending'
-        ORDER BY created_at DESC
-    `);
-    return res.status(200).json(users);
+    try {
+        const users = await query(`
+            SELECT student_id, first_name, last_name, status, batch_year, id_card_image 
+            FROM users 
+            WHERE verification_status = 'pending'
+            ORDER BY created_at DESC
+        `);
+        return res.status(200).json(users);
+    } catch (e) {
+        console.error('Get pending error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }
 
 // ========== GET PENDING BIODATAS ==========
 async function handleGetPendingBiodatas(req, res) {
-    const biodatas = await query(`
-        SELECT u.student_id, u.first_name, u.last_name, u.gender, u.occupation, u.updated_at
-        FROM users u
-        WHERE u.biodata_status = 'pending'
-        ORDER BY u.updated_at DESC
-    `);
-    return res.status(200).json(biodatas);
+    try {
+        const biodatas = await query(`
+            SELECT u.student_id, u.first_name, u.last_name, u.gender, p.occupation, p.updated_at
+            FROM users u
+            LEFT JOIN profiles p ON u.id = p.user_id
+            WHERE p.biodata_status = 'pending'
+            ORDER BY p.updated_at DESC
+        `);
+        return res.status(200).json(biodatas);
+    } catch (e) {
+        // If profiles table doesn't exist, return empty array
+        return res.status(200).json([]);
+    }
 }
 
 // ========== GET BIODATA DETAILS ==========

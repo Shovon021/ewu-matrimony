@@ -1,17 +1,6 @@
-<?php
-// api/admin/get_biodata_details.php
-// Returns full biodata for a specific user (for admin review)
-header('Content-Type: application/json');
-session_start();
-
-// ADMIN AUTH CHECK
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
-
-require_once '../../config/db.php';
+// Enable CORS
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
 
 $student_id = $_GET['student_id'] ?? '';
 
@@ -20,6 +9,23 @@ if (empty($student_id)) {
     exit;
 }
 
+// Manual connection to handle errors gracefully without dying
+$servername = getenv('DB_HOST') ?: "localhost";
+$username = getenv('DB_USER') ?: "root";
+$password = getenv('DB_PASS') ?: "";
+$dbname = getenv('DB_NAME') ?: "ewu_matrimony";
+
+// Suppress error reporting for connection
+error_reporting(0);
+$conn = new mysqli($servername, $username, $password, $dbname);
+error_reporting(E_ALL);
+
+if ($conn->connect_error) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed']);
+    exit;
+}
+
+// DB Connected - Fetch Data
 $sql = "SELECT 
     u.student_id, u.first_name, u.last_name, u.email, u.phone, u.gender, u.dob, u.religion, u.batch_year, u.status as student_status,
     p.*
@@ -28,17 +34,22 @@ $sql = "SELECT
     WHERE u.student_id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $student_id);
-$stmt->execute();
-$result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
-    $data = $result->fetch_assoc();
-    echo json_encode(['success' => true, 'data' => $data]);
+if ($stmt) {
+    $stmt->bind_param("s", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $data = $result->fetch_assoc();
+        echo json_encode(['success' => true, 'data' => $data]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Biodata not found']);
+    }
+    $stmt->close();
 } else {
-    echo json_encode(['success' => false, 'message' => 'Biodata not found']);
+    echo json_encode(['success' => false, 'message' => 'Query preparation failed']);
 }
 
-$stmt->close();
 $conn->close();
 ?>

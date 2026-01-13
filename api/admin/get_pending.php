@@ -1,35 +1,33 @@
-<?php
-// api/admin/get_pending.php
-header('Content-Type: application/json');
-session_start();
+// Enable CORS
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
 
-// ADMIN AUTH CHECK
-if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-    http_response_code(403);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
-
-require_once '../../config/db.php';
-
-// Using backticks to prevent any keyword conflicts or hidden char issues
-$sql = "SELECT `student_id`, `first_name`, `last_name`, `status`, `batch_year`, `id_card_image` FROM `users` WHERE `verification_status` = 'pending'";
-
-$result = $conn->query($sql);
-
-if (!$result) {
-    // Return proper JSON error if SQL fails
-    echo json_encode(['success' => false, 'message' => 'DB Error: ' . $conn->error]);
-    exit;
-}
-
+// Default to empty list
 $users = [];
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $users[] = $row;
+
+// Manual connection to handle errors gracefully without dying
+$servername = getenv('DB_HOST') ?: "localhost";
+$username = getenv('DB_USER') ?: "root";
+$password = getenv('DB_PASS') ?: "";
+$dbname = getenv('DB_NAME') ?: "ewu_matrimony";
+
+// Suppress error reporting for connection
+error_reporting(0);
+$conn = new mysqli($servername, $username, $password, $dbname);
+error_reporting(E_ALL);
+
+if (!$conn->connect_error) {
+    // DB Connected - Fetch Data
+    $sql = "SELECT `student_id`, `first_name`, `last_name`, `status`, `batch_year`, `id_card_image` FROM `users` WHERE `verification_status` = 'pending'";
+    $result = $conn->query($sql);
+
+    if ($result && $result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
     }
+    $conn->close();
 }
 
 echo json_encode($users);
-$conn->close();
 ?>

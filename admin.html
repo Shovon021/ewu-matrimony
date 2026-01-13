@@ -482,19 +482,16 @@
     </aside>
 
     <script>
-        // AUTH CHECK - Redirect if not logged in
-        fetch('api/admin/check_auth.php')
-            .then(res => res.json())
-            .then(data => {
-                if (!data.authenticated) {
-                    window.location.href = 'admin_login.html';
-                }
-            })
-            .catch(() => window.location.href = 'admin_login.html');
+        // AUTH CHECK - Serverless mode uses localStorage only
+        // (Server-side session check removed because Vercel is stateless)
 
         async function logoutAdmin() {
             if (!confirm('Are you sure you want to logout?')) return;
-            await fetch('api/admin/logout.php');
+            // Clear client-side session
+            localStorage.removeItem('admin_logged_in');
+            localStorage.removeItem('admin_username');
+            // Optional: Call server cleanup if needed
+            // await fetch('api/admin/logout.php'); 
             window.location.href = 'admin_login.html';
         }
     </script>

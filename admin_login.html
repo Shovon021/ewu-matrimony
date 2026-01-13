@@ -119,7 +119,8 @@
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+                <input type="password" id="password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    required>
                 <div class="toggle-password" onclick="togglePassword()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" style="width: 20px; height: 20px;">
@@ -170,7 +171,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    window.location.href = 'admin'; // clean link
+                    window.location.href = 'admin.html'; // redirect to dashboard
                 } else {
                     errorMsg.style.display = 'block';
                     errorMsg.textContent = result.message || 'Invalid username or password';

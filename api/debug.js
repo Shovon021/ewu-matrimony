@@ -2,8 +2,17 @@
 import { createConnection } from 'mysql2/promise';
 
 export default async function handler(req, res) {
+    let host = process.env.DB_HOST;
+    let port = 4000;
+
+    if (host.includes(':')) {
+        [host, port] = host.split(':');
+        port = parseInt(port, 10);
+    }
+
     const config = {
-        host: process.env.DB_HOST,
+        host: host,
+        port: port,
         user: process.env.DB_USER,
         password: process.env.DB_PASS,
         database: process.env.DB_NAME,

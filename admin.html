@@ -696,6 +696,11 @@
     </main>
 
     <script>
+        // Auth Guard - Check localStorage for login status (workaround for serverless)
+        if (localStorage.getItem('admin_logged_in') !== 'true') {
+            window.location.href = 'admin_login.html';
+        }
+
         // View Switching Logic
         function switchView(viewId, linkElement) {
             // Update Menu Active State

@@ -1,13 +1,22 @@
 <?php
 // config/db.php
 
-$servername = getenv('DB_HOST') ?: "localhost";
+$db_host_raw = getenv('DB_HOST') ?: "localhost";
 $username = getenv('DB_USER') ?: "root";
 $password = getenv('DB_PASS') ?: "";
 $dbname = getenv('DB_NAME') ?: "ewu_matrimony";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password);
+// Parse host and port (TiDB Cloud uses port 4000)
+if (strpos($db_host_raw, ':') !== false) {
+    list($servername, $dbport) = explode(':', $db_host_raw, 2);
+    $dbport = (int)$dbport;
+} else {
+    $servername = $db_host_raw;
+    $dbport = 3306;
+}
+
+// Create connection with port
+$conn = new mysqli($servername, $username, $password, $dbname, $dbport);
 
 // Check connection
 if ($conn->connect_error) {

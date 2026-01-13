@@ -16,14 +16,23 @@ $stats = [
 ];
 
 // Manual connection to handle errors gracefully without dying
-$servername = getenv('DB_HOST') ?: "localhost";
+$db_host_raw = getenv('DB_HOST') ?: "localhost";
 $username = getenv('DB_USER') ?: "root";
 $password = getenv('DB_PASS') ?: "";
 $dbname = getenv('DB_NAME') ?: "ewu_matrimony";
 
+// Parse host and port (TiDB Cloud uses port 4000)
+if (strpos($db_host_raw, ':') !== false) {
+    list($servername, $dbport) = explode(':', $db_host_raw, 2);
+    $dbport = (int)$dbport;
+} else {
+    $servername = $db_host_raw;
+    $dbport = 3306;
+}
+
 // Suppress error reporting for connection to avoid leaking HTML errors
 error_reporting(0);
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, $dbport);
 error_reporting(E_ALL);
 
 if (!$conn->connect_error) {

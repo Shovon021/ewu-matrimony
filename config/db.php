@@ -15,11 +15,13 @@ if (strpos($db_host_raw, ':') !== false) {
     $dbport = 3306;
 }
 
-// Create connection with port
-$conn = new mysqli($servername, $username, $password, $dbname, $dbport);
+// TiDB Cloud requires SSL - use mysqli_real_connect with SSL flag
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+$connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
 
 // Check connection
-if ($conn->connect_error) {
+if (!$connected || $conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 

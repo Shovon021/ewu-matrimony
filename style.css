@@ -1604,7 +1604,22 @@ p {
 
   .hero-cta {
     flex-direction: column;
-    bottom: 180px;
+    bottom: 220px;
+    /* Moved up to make room */
+    gap: 0.8rem;
+    width: 80%;
+  }
+
+  /* Hide potential clutter on mobile */
+  .hero .hero-stats,
+  .pop-shape {
+    display: none !important;
+  }
+
+  /* Adjust arrow position */
+  .hero-arrow {
+    display: none;
+    /* Hide arrows on mobile, swipe is better (if implemented) or just dots */
   }
 }
 

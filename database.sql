@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS interests (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     from_user_id INT(6) UNSIGNED NOT NULL,
     to_user_id INT(6) UNSIGNED NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     UNIQUE KEY unique_interest (from_user_id, to_user_id),

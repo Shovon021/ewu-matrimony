@@ -35,13 +35,25 @@ error_reporting(0);
 
 // TiDB Cloud requires SSL - use mysqli_real_connect with SSL flag
 $conn = mysqli_init();
+if (!$conn) {
+    echo json_encode(['success' => false, 'error' => 'mysqli_init failed', 'stats' => $stats]);
+    exit;
+}
+
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-$connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+$connected = @mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
 
-error_reporting(E_ALL);
+if (!$connected) {
+    echo json_encode(['success' => false, 'error' => 'Connection failed: ' . mysqli_connect_error(), 'stats' => $stats]);
+    exit;
+}
 
-if (!$conn->connect_error) {
-    // DB Connected - Fetch Real Stats
+if ($conn->connect_error) {
+    echo json_encode(['success' => false, 'error' => 'Connect error: ' . $conn->connect_error, 'stats' => $stats]);
+    exit;
+}
+
+// DB Connected - Fetch Real Stats
     
     // Total Users
     $res = $conn->query("SELECT COUNT(*) as count FROM users");

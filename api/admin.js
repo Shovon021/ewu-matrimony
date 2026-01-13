@@ -111,7 +111,13 @@ async function handleGetPending(req, res) {
         return res.status(200).json(users);
     } catch (e) {
         console.error('Get pending error:', e);
-        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+        // DEBUG: Show what user/db is being used (hiding password)
+        const debugInfo = `User: ${process.env.DB_USER}, DB: ${process.env.DB_NAME}, Host: ${process.env.DB_HOST}`;
+        return res.status(500).json({
+            success: false,
+            message: 'Database error: ' + e.message,
+            debug: debugInfo
+        });
     }
 }
 

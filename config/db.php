@@ -2,7 +2,7 @@
 // config/db.php
 
 $db_host_raw = getenv('DB_HOST') ?: "localhost";
-$username = getenv('DB_USER') ?: "root";
+$username = getenv('DB_USER') ?: "3EfCaKwRxefFq4w.root";
 $password = getenv('DB_PASS') ?: "";
 $dbname = getenv('DB_NAME') ?: "ewu_matrimony";
 

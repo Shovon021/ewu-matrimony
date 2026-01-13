@@ -17,7 +17,7 @@ $stats = [
 
 // Manual connection to handle errors gracefully without dying
 $db_host_raw = getenv('DB_HOST') ?: "localhost";
-$username = getenv('DB_USER') ?: "root";
+$username = getenv('DB_USER') ?: "3EfCaKwRxefFq4w.root";
 $password = getenv('DB_PASS') ?: "";
 $dbname = getenv('DB_NAME') ?: "ewu_matrimony";
 
@@ -35,21 +35,14 @@ error_reporting(0);
 
 // TiDB Cloud requires SSL - use mysqli_real_connect with SSL flag
 $conn = mysqli_init();
-if (!$conn) {
-    echo json_encode(['success' => false, 'error' => 'mysqli_init failed', 'stats' => $stats]);
-    exit;
-}
-
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-$connected = @mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
+$connected = mysqli_real_connect($conn, $servername, $username, $password, $dbname, $dbport, NULL, MYSQLI_CLIENT_SSL);
 
-if (!$connected) {
-    echo json_encode(['success' => false, 'error' => 'Connection failed: ' . mysqli_connect_error(), 'stats' => $stats]);
-    exit;
-}
+error_reporting(E_ALL);
 
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'error' => 'Connect error: ' . $conn->connect_error, 'stats' => $stats]);
+if (!$connected || $conn->connect_error) {
+    // Silent fail or return generic error
+    echo json_encode(['success' => false, 'error' => 'Database connection failed', 'stats' => []]);
     exit;
 }
 

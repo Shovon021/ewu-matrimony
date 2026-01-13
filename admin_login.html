@@ -181,8 +181,10 @@
                     btn.disabled = false;
                 }
             } catch (err) {
+                console.error('Login Error:', err);
                 errorMsg.style.display = 'block';
-                errorMsg.textContent = 'Connection error. Please try again.';
+                // Show actual error for debugging, or generic message if it fails
+                errorMsg.textContent = 'Login Error: ' + (err.message || 'Connection failed');
                 btn.innerHTML = 'Login';
                 btn.disabled = false;
             }

@@ -1,4 +1,5 @@
 import { query, execute } from './_lib/db.js';
+import { uploadImage } from './_lib/cloudinary.js';
 import bcrypt from 'bcryptjs';
 
 // Consolidated Auth API - handles login and register via ?action= parameter
@@ -91,14 +92,25 @@ async function handleRegister(req, res) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let idCardUrl = '';
+    if (id_card_image && id_card_image.startsWith('data:image')) {
+        try {
+            idCardUrl = await uploadImage(id_card_image, 'ewu-matrimony/id-cards');
+        } catch (e) {
+            console.error('Failed to upload ID card:', e);
+            // Proceed without ID card, or return error? 
+            // Better to log it but let user register, admin will see "No ID" and reject.
+        }
+    }
+
     const result = await execute(`
         INSERT INTO users (student_id, first_name, last_name, email, phone, password, gender, dob, religion, status, batch_year, id_card_image, verification_status, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-    `, [studentId, firstName, lastName, email || '', phone || '', hashedPassword, gender, dob || null, religion || '', status || '', batch_year || '', id_card_image || '']);
+    `, [studentId, firstName, lastName, email || '', phone || '', hashedPassword, gender, dob || null, religion || '', status || '', batch_year || '', idCardUrl]);
 
     if (result.insertId) {
         try {
-            await execute('INSERT INTO profiles (user_id, biodata_status) VALUES (?, ?)', [result.insertId, 'pending']);
+            await execute('INSERT INTO profiles (user_id, biodata_status) VALUES (?, ?)', [result.insertId, 'draft']);
         } catch (e) {
             // profiles table might not exist
         }

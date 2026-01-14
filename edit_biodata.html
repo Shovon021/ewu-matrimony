@@ -434,24 +434,53 @@
             }
         });
 
+        // Helper to get logged in user
+        function getUser() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return JSON.parse(userStr);
+        }
+
+        const currentUser = getUser();
+
         // Load existing data
         async function loadProfile() {
+            if (!currentUser) return;
             try {
-                const response = await fetch('api/profile/get.php');
+                const response = await fetch(`api/profile?student_id=${currentUser.student_id}`);
                 const result = await response.json();
 
                 if (result.success && result.data) {
                     const data = result.data;
-                    // Populate all form fields
+                    // Populate fields
+                    const fieldMap = {
+                        'father_profession': 'father_occupation',
+                        'mother_profession': 'mother_occupation',
+                        'family_class': 'family_status',
+                        'preferred_age_min': 'partner_min_age',
+                        'preferred_age_max': 'partner_max_age',
+                        'preferred_height': 'partner_min_height',
+                        'preferred_education': 'partner_education',
+                        'preferred_profession': 'partner_occupation'
+                    };
+
                     const fields = ['about_me', 'height', 'weight', 'skin_tone', 'blood_group', 'marital_status',
                         'education', 'occupation', 'company', 'income', 'present_address', 'permanent_address',
-                        'father_name', 'father_profession', 'mother_name', 'mother_profession', 'siblings',
-                        'family_type', 'family_class', 'preferred_age_min', 'preferred_age_max', 'preferred_height',
-                        'preferred_education', 'preferred_profession', 'preferred_location', 'expectations'];
+                        'father_name', 'mother_name', 'siblings', 'family_type',
+                        'preferred_location', 'expectations',
+                        // Mapped fields
+                        'father_profession', 'mother_profession', 'family_class',
+                        'preferred_age_min', 'preferred_age_max', 'preferred_height',
+                        'preferred_education', 'preferred_profession'
+                    ];
 
                     fields.forEach(field => {
+                        const dbField = fieldMap[field] || field;
                         const el = document.getElementById(field);
-                        if (el && data[field]) el.value = data[field];
+                        if (el && data[dbField]) el.value = data[dbField];
                     });
 
                     // Update status display
@@ -459,16 +488,16 @@
                         const statusEl = document.getElementById('biodataStatus');
                         const statusMap = {
                             'draft': 'Draft',
-                            'pending': ' Pending Verification',
-                            'verified': ' Verified',
-                            'rejected': ' Rejected'
+                            'pending': 'Pending Verification',
+                            'verified': 'Verified',
+                            'rejected': 'Rejected'
                         };
                         statusEl.innerHTML = `Status: <strong>${statusMap[data.biodata_status] || 'Draft'}</strong>`;
                     }
 
                     // Show existing photo
                     if (data.photo) {
-                        document.getElementById('photoPreview').innerHTML = `<img src="${data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo}" alt="Profile">`;
+                        document.getElementById('photoPreview').innerHTML = `<img src="${data.photo}" alt="Profile">`;
                     }
                 }
             } catch (e) {
@@ -478,9 +507,12 @@
 
         // Save/Submit form
         async function saveForm(submitForVerification = false) {
+            if (!currentUser) return;
+
             const form = document.getElementById('biodataForm');
             const formData = new FormData(form);
             formData.append('submit_for_verification', submitForVerification ? '1' : '0');
+            formData.append('student_id', currentUser.student_id);
 
             const btn = submitForVerification ? document.getElementById('submitBtn') : document.getElementById('saveDraftBtn');
             const originalText = btn.textContent;
@@ -488,7 +520,7 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('api/profile/save.php', {
+                const response = await fetch('api/profile?action=save', {
                     method: 'POST',
                     body: formData
                 });
@@ -507,6 +539,7 @@
                 }
             } catch (e) {
                 alert('Connection error. Please try again.');
+                console.error(e);
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;

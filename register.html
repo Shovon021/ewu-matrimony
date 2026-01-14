@@ -493,41 +493,60 @@
 
                 // Convert FormData to JSON object for the API
                 const jsonData = {};
-                formData.forEach((value, key) => { jsonData[key] = value; });
+                formData.forEach((value, key) => {
+                    // Skip the file object in standard loop, we handle it manually
+                    if (key !== 'idCardInput') {
+                        jsonData[key] = value;
+                    }
+                });
 
-                fetch('api/auth?action=register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(jsonData)
-                })
-                    .then(async response => {
-                        const text = await response.text();
-                        try {
-                            const data = JSON.parse(text);
-                            if (data.success) {
-                                Toast.success('Success', data.message);
-                                setTimeout(() => window.location.href = 'index.html', 2000);
-                            } else {
-                                Toast.error('Registration Failed', data.message);
+                // Handle ID Card File
+                const fileInput = document.getElementById('idCardInput');
+                if (fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        jsonData['id_card_image'] = e.target.result; // Base64 string
+                        submitRegistration(jsonData);
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
+                    submitRegistration(jsonData);
+                }
+
+                function submitRegistration(data) {
+                    fetch('api/auth?action=register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                        .then(async response => {
+                            const text = await response.text();
+                            try {
+                                const data = JSON.parse(text);
+                                if (data.success) {
+                                    Toast.success('Success', data.message);
+                                    setTimeout(() => window.location.href = 'index.html', 2000);
+                                } else {
+                                    Toast.error('Registration Failed', data.message);
+                                    nextBtn.disabled = false;
+                                    nextBtn.textContent = 'Create Account';
+                                }
+                            } catch (e) {
+                                console.error('Server Error:', text);
+                                Toast.error('System Error', 'Server returned invalid response. Check console.');
+                                alert('Server Error: ' + text.substring(0, 100) + '...');
                                 nextBtn.disabled = false;
                                 nextBtn.textContent = 'Create Account';
                             }
-                        } catch (e) {
-                            console.error('Server Error:', text);
-                            Toast.error('System Error', 'Server returned invalid response. Check console.');
-                            alert('Server Error: ' + text.substring(0, 100) + '...');
+                        })
+                        .catch(error => {
+                            console.error('Network Error:', error);
+                            Toast.error('Network Error', 'Connection failed.');
                             nextBtn.disabled = false;
                             nextBtn.textContent = 'Create Account';
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Network Error:', error);
-                        Toast.error('Network Error', 'Connection failed.');
-                        nextBtn.disabled = false;
-                        nextBtn.textContent = 'Create Account';
-                    });
-            }
-        });
+                        });
+                }
+            });
 
         prevBtn.addEventListener('click', () => {
             if (currentStep > 1) {

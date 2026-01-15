@@ -110,7 +110,7 @@ export default async function handler(req, res) {
         console.error('CRITICAL ADMIN API ERROR:', error);
         return res.status(500).json({
             success: false,
-            message: 'Internal Server Error',
+            message: 'Internal Server Error: ' + error.message,
             error: error.message,
             stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });

@@ -98,8 +98,7 @@ async function handleRegister(req, res) {
             idCardUrl = await uploadImage(id_card_image, 'ewu-matrimony/id-cards');
         } catch (e) {
             console.error('Failed to upload ID card:', e);
-            // Proceed without ID card, or return error? 
-            // Better to log it but let user register, admin will see "No ID" and reject.
+            return res.status(400).json({ success: false, message: 'Failed to upload photo. Image might be too large (Max 4MB).' });
         }
     }
 

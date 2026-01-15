@@ -43,12 +43,38 @@ export default async function handler(req, res) {
                 return handleDeleteUser(req, res);
             case 'suspend_user':
                 return handleSuspendUser(req, res);
+            case 'get_match_history':
+                return handleGetMatchHistory(req, res);
             default:
                 return res.status(400).json({ success: false, message: 'Invalid action' });
         }
     } catch (error) {
         console.error('Admin API error:', error);
         return res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+    }
+}
+
+// ... existing handlers ...
+
+// ========== GET MATCH HISTORY ==========
+async function handleGetMatchHistory(req, res) {
+    try {
+        const matches = await query(`
+            SELECT 
+                i.id, i.created_at,
+                u1.first_name as s_name, u1.last_name as s_last, u1.student_id as s_id,
+                u2.first_name as r_name, u2.last_name as r_last, u2.student_id as r_id
+            FROM interests i
+            JOIN users u1 ON i.sender_id = u1.id
+            JOIN users u2 ON i.receiver_id = u2.id
+            WHERE i.status = 'matched'
+            ORDER BY i.created_at DESC
+        `);
+
+        return res.status(200).json({ success: true, matches });
+    } catch (e) {
+        console.error('Get match history error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
     }
 }
 

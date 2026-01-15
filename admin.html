@@ -474,6 +474,9 @@
             <a href="#" class="menu-item" onclick="switchView('users', this); return false;">
                 <span>&#128101;</span> Users
             </a>
+            <a href="#" class="menu-item" onclick="switchView('matches', this); return false;">
+                <span>&#128150;</span> Matches
+            </a>
             <a href="#" class="menu-item" onclick="switchView('blog', this); return false;">
                 <span>&#128196;</span> Blog CMS
             </a>
@@ -719,6 +722,33 @@
                     </div>
                 </div>
             </div>
+            <!-- Matches View -->
+            <div id="view-matches" class="view-section" style="display: none;">
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="card-title">Success Stories (Match History)</div>
+                        <button class="btn btn-sm btn-outline"
+                            style="border-color: var(--gray-300); color: var(--gray-600);"
+                            onclick="loadMatchHistory()">Refresh</button>
+                    </div>
+                    <table class="data-table" id="matchesTable">
+                        <thead>
+                            <tr>
+                                <th>Match Date</th>
+                                <th>Partner 1</th>
+                                <th>Partner 2</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matchesTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:2rem;">Loading matches...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div id="view-blog" class="view-section" style="display: none;">
                 <div class="content-card">
                     <div class="card-header">
@@ -803,6 +833,7 @@
             // Auto-load data based on view
             if (viewId === 'messages') loadMessages();
             if (viewId === 'users') loadAllUsers();
+            if (viewId === 'matches') loadMatchHistory();
         }
 
         let currentMessages = [];
@@ -1365,11 +1396,16 @@
                     // Pagination
                     renderUsersPagination(result.pagination);
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">Error loading users</td></tr>';
+                    // Show specific error message
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">
+                        Error loading users: ${result.message || 'Unknown error'}
+                    </td></tr>`;
                 }
             } catch (e) {
                 console.error('Load users error:', e);
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">Connection error</td></tr>';
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">
+                    Connection error: ${e.message}
+                </td></tr>`;
             }
         }
 
@@ -1509,6 +1545,46 @@
                 }
             } catch (e) {
                 console.error('Load analytics error:', e);
+            }
+        }
+
+        // ========== MATCH HISTORY ==========
+        async function loadMatchHistory() {
+            const tbody = document.getElementById('matchesTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">Loading matches...</td></tr>';
+
+            try {
+                const response = await fetch('api/admin?action=get_match_history');
+                const result = await response.json();
+
+                if (result.success && result.matches) {
+                    if (result.matches.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem; color:var(--gray-500);">No matches found yet</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = result.matches.map(m => `
+                        <tr>
+                            <td>
+                                <div>${new Date(m.created_at).toLocaleDateString()}</div>
+                                <div style="font-size:0.8rem; color:var(--gray-500);">${new Date(m.created_at).toLocaleTimeString()}</div>
+                            </td>
+                            <td>
+                                <strong>${m.s_name} ${m.s_last}</strong><br>
+                                <span style="font-size:0.8rem; color:var(--gray-500);">ID: ${m.s_id}</span>
+                            </td>
+                            <td>
+                                <strong>${m.r_name} ${m.r_last}</strong><br>
+                                <span style="font-size:0.8rem; color:var(--gray-500);">ID: ${m.r_id}</span>
+                            </td>
+                            <td><span class="status-badge-verified">Matched</span></td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:2rem; color:red;">Error: ${result.message}</td></tr>`;
+                }
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:2rem; color:red;">Connection error: ${e.message}</td></tr>`;
             }
         }
 

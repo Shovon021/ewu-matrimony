@@ -243,7 +243,7 @@
                             localStorage.setItem('student_id', studentId);
                             localStorage.setItem('is_logged_in', 'true');
                             Toast.success('Welcome Back!', 'Login successful. Redirecting...');
-                            setTimeout(() => window.location.href = 'profile.html', 1500);
+                            setTimeout(() => window.location.href = 'index.html', 1500);
                         } else {
                             if (result.locked) {
                                 Toast.error('Account Locked', result.message);

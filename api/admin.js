@@ -76,40 +76,44 @@ export default async function handler(req, res) {
     try {
         switch (action) {
             case 'login':
-                return handleLogin(req, res);
+                return await handleLogin(req, res);
             case 'stats':
-                return handleStats(req, res);
+                return await handleStats(req, res);
             case 'get_pending':
-                return handleGetPending(req, res);
+                return await handleGetPending(req, res);
             case 'get_pending_biodatas':
-                return handleGetPendingBiodatas(req, res);
+                return await handleGetPendingBiodatas(req, res);
             case 'get_biodata_details':
-                return handleGetBiodataDetails(req, res);
+                return await handleGetBiodataDetails(req, res);
             case 'verify_user':
-                return handleVerifyUser(req, res);
+                return await handleVerifyUser(req, res);
             case 'verify_biodata':
-                return handleVerifyBiodata(req, res);
+                return await handleVerifyBiodata(req, res);
             case 'get_messages':
-                return handleGetMessages(req, res);
+                return await handleGetMessages(req, res);
             case 'update_credentials':
-                return handleUpdateCredentials(req, res);
-            // NEW: User Management & Analytics
+                return await handleUpdateCredentials(req, res);
             case 'get_all_users':
-                return handleGetAllUsers(req, res);
+                return await handleGetAllUsers(req, res);
             case 'get_analytics':
-                return handleGetAnalytics(req, res);
+                return await handleGetAnalytics(req, res);
             case 'delete_user':
-                return handleDeleteUser(req, res);
+                return await handleDeleteUser(req, res);
             case 'suspend_user':
-                return handleSuspendUser(req, res);
+                return await handleSuspendUser(req, res);
             case 'get_match_history':
-                return handleGetMatchHistory(req, res);
+                return await handleGetMatchHistory(req, res);
             default:
                 return res.status(400).json({ success: false, message: 'Invalid action' });
         }
     } catch (error) {
-        console.error('Admin API error:', error);
-        return res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+        console.error('CRITICAL ADMIN API ERROR:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 }
 

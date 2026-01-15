@@ -421,6 +421,25 @@
             </div>
         </div>
     </div>
+
+    <!-- User Details Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Verification Details</h3>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="userDetailsContent">
+                Loading...
+            </div>
+            <div class="modal-footer"
+                style="padding:1rem 1.5rem; justify-content:flex-end; display:flex; gap:1rem; border-top:1px solid #eee;">
+                <button class="btn btn-outline" onclick="closeUserModal()">Close</button>
+                <button class="action-btn btn-check" id="userModalApprove" style="padding:0.5rem 1rem;">Approve</button>
+                <button class="action-btn btn-x" id="userModalReject" style="padding:0.5rem 1rem;">Reject</button>
+            </div>
+        </div>
+    </div>
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">
@@ -806,6 +825,14 @@
 
                 users.forEach(user => {
                     const row = document.createElement('tr');
+                    row.setAttribute('data-id', user.student_id);
+                    // Handle ID Card View Logic
+                    let idAction = '<span style="color:var(--gray-400);">No ID</span>';
+                    if (user.id_card_image) {
+                        const imgUrl = user.id_card_image.startsWith('http') ? user.id_card_image : 'uploads/' + user.id_card_image;
+                        idAction = `<a href="${imgUrl}" target="_blank" style="color:var(--primary); text-decoration:underline;">View ID</a>`;
+                    }
+
                     row.innerHTML = `
                         <td>
                             <div class="user-cell">
@@ -817,15 +844,16 @@
                             </div>
                         </td>
                         <td>${user.student_id}</td>
-                        <td>${user.status}</td>
+                        <td>${user.status || 'Student'}</td>
                         <td>
-                            ${user.id_card_image ?
-                            `<a href="${user.id_card_image.startsWith('http') ? user.id_card_image : 'uploads/' + user.id_card_image}" target="_blank" style="color:var(--primary); text-decoration:underline;">View ID</a>` :
-                            '<span style="color:var(--gray-400);">No ID</span>'}
+                            ${idAction}
                         </td>
                         <td><span class="status-badge status-pending">Pending</span></td>
                         <td>
                             <div style="display:flex; gap:0.5rem;">
+                                <button class="action-btn btn-view" onclick="viewUserDetails('${user.student_id}')" title="View Details" style="background:#f3f4f6; color:#1f2937;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </button>
                                 <button class="action-btn btn-check" onclick="verifyUser('${user.student_id}', 'approve', this)" title="Approve">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
                                 </button>
@@ -875,25 +903,81 @@
             } catch (e) {
                 alert('Connection error');
             }
-        }
 
-        // ========== BIODATA VERIFICATION ==========
-        async function loadPendingBiodatas() {
-            try {
-                const response = await fetch('api/admin?action=get_pending_biodatas');
-                const biodatas = await response.json();
+            async function viewUserDetails(studentId) {
+                document.getElementById('userModal').classList.add('active');
+                const content = document.getElementById('userDetailsContent');
+                content.innerHTML = '<div style="text-align:center; padding:2rem;">Loading details...</div>';
 
-                const tbody = document.querySelector('#biodataTable tbody');
-                tbody.innerHTML = '';
+                // Find current row button for actions
+                const row = document.querySelector(`tr[data-id="${studentId}"]`);
+                const approveBtn = row ? row.querySelector('.btn-check') : null;
+                const rejectBtn = row ? row.querySelector('.btn-x') : null;
 
-                if (biodatas.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--gray-500); padding:2rem;">No pending biodata verifications</td></tr>';
-                    return;
+                // Bind Modal Buttons
+                document.getElementById('userModalApprove').onclick = () => {
+                    if (approveBtn) verifyUser(studentId, 'approve', approveBtn);
+                    closeUserModal();
+                };
+                document.getElementById('userModalReject').onclick = () => {
+                    if (rejectBtn) verifyUser(studentId, 'reject', rejectBtn);
+                    closeUserModal();
+                };
+
+                try {
+                    // Reuse the biodata details endpoint which fetches FULL user info
+                    const response = await fetch(`api/admin?action=get_biodata_details&student_id=${studentId}`);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const u = result.data;
+                        const imgUrl = u.id_card_image ? (u.id_card_image.startsWith('http') ? u.id_card_image : 'uploads/' + u.id_card_image) : '';
+
+                        content.innerHTML = `
+                        <div style="text-align:center; margin-bottom:1.5rem; background:#f3f4f6; padding:1rem; border-radius:8px;">
+                           ${imgUrl ?
+                                `<a href="${imgUrl}" target="_blank"><img src="${imgUrl}" style="max-width:100%; max-height:250px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1);" alt="ID Card"></a><br><small style="color:#666;">Click to enlarge</small>` :
+                                '<div style="padding:1rem; color:#666;">No ID Card Uploaded</div>'}
+                        </div>
+                        <div class="detail-row"><span class="detail-label">Full Name:</span> <span class="detail-value">${u.first_name} ${u.last_name}</span></div>
+                        <div class="detail-row"><span class="detail-label">Student ID:</span> <span class="detail-value">${u.student_id}</span></div>
+                        <div class="detail-row"><span class="detail-label">Email:</span> <span class="detail-value">${u.email || 'N/A'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Phone:</span> <span class="detail-value">${u.phone || 'N/A'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Gender:</span> <span class="detail-value">${u.gender || 'N/A'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Religion:</span> <span class="detail-value">${u.religion || 'N/A'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Date of Birth:</span> <span class="detail-value">${u.dob || 'N/A'}</span></div>
+                        <div class="detail-row"><span class="detail-label">Registered:</span> <span class="detail-value">${new Date(u.created_at).toLocaleString()}</span></div>
+                    `;
+                    } else {
+                        content.innerHTML = '<div style="color:red; text-align:center;">Failed to load user details.</div>';
+                    }
+                } catch (e) {
+                    console.error(e);
+                    content.innerHTML = '<div style="color:red; text-align:center;">Connection Error.</div>';
                 }
+            }
 
-                biodatas.forEach(bio => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
+            function closeUserModal() {
+                document.getElementById('userModal').classList.remove('active');
+            }
+
+            // ========== BIODATA VERIFICATION ==========
+            async function loadPendingBiodatas() {
+                try {
+                    const response = await fetch('api/admin?action=get_pending_biodatas');
+                    const biodatas = await response.json();
+
+                    const tbody = document.querySelector('#biodataTable tbody');
+                    tbody.innerHTML = '';
+
+                    if (biodatas.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--gray-500); padding:2rem;">No pending biodata verifications</td></tr>';
+                        return;
+                    }
+
+                    biodatas.forEach(bio => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
                         <td>
                             <div class="user-cell">
                                 <div class="user-avatar" style="background:#fce7f3; color:#db2777; display:flex; align-items:center; justify-content:center; font-weight:bold;">${bio.first_name[0]}</div>
@@ -918,59 +1002,59 @@
                             </div>
                         </td>
                     `;
-                    tbody.appendChild(row);
-                });
+                        tbody.appendChild(row);
+                    });
 
-            } catch (e) {
-                console.error("Error loading biodatas", e);
-            }
-        }
-
-        async function verifyBiodata(studentId, action, btn) {
-            const row = btn.closest('tr');
-
-            if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
-
-            try {
-                const response = await fetch('api/admin?action=verify_biodata', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ studentId, action })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    if (action === 'approve') {
-                        row.style.background = '#f0fdf4';
-                        btn.parentElement.innerHTML = '<span style="color:#15803d; font-size:0.9rem;">Published </span>';
-                    } else {
-                        row.style.opacity = '0.5';
-                        btn.parentElement.innerHTML = '<span style="color:#b91c1c; font-size:0.9rem;">Rejected</span>';
-                    }
-                } else {
-                    alert('Error: ' + result.message);
+                } catch (e) {
+                    console.error("Error loading biodatas", e);
                 }
-            } catch (e) {
-                alert('Connection error');
             }
-        }
 
-        // ========== VIEW BIODATA MODAL ==========
-        let currentBiodataStudentId = null;
+            async function verifyBiodata(studentId, action, btn) {
+                const row = btn.closest('tr');
 
-        async function viewBiodataDetails(studentId) {
-            currentBiodataStudentId = studentId;
-            document.getElementById('biodataModal').classList.add('active');
-            document.getElementById('biodataDetails').innerHTML = 'Loading...';
+                if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
 
-            try {
-                const response = await fetch(`api/admin?action=get_biodata_details&student_id=${studentId}`);
-                const result = await response.json();
+                try {
+                    const response = await fetch('api/admin?action=verify_biodata', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ studentId, action })
+                    });
 
-                if (result.success) {
-                    const d = result.data;
-                    document.getElementById('biodataDetails').innerHTML = `
+                    const result = await response.json();
+
+                    if (result.success) {
+                        if (action === 'approve') {
+                            row.style.background = '#f0fdf4';
+                            btn.parentElement.innerHTML = '<span style="color:#15803d; font-size:0.9rem;">Published </span>';
+                        } else {
+                            row.style.opacity = '0.5';
+                            btn.parentElement.innerHTML = '<span style="color:#b91c1c; font-size:0.9rem;">Rejected</span>';
+                        }
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (e) {
+                    alert('Connection error');
+                }
+            }
+
+            // ========== VIEW BIODATA MODAL ==========
+            let currentBiodataStudentId = null;
+
+            async function viewBiodataDetails(studentId) {
+                currentBiodataStudentId = studentId;
+                document.getElementById('biodataModal').classList.add('active');
+                document.getElementById('biodataDetails').innerHTML = 'Loading...';
+
+                try {
+                    const response = await fetch(`api/admin?action=get_biodata_details&student_id=${studentId}`);
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const d = result.data;
+                        document.getElementById('biodataDetails').innerHTML = `
                         <div style="text-align:center; margin-bottom:1rem;">
                             <img src="${d.photo ? (d.photo.startsWith('http') ? d.photo : 'uploads/' + d.photo) : 'default.png'}" 
                                  onerror="this.src='https://ui-avatars.com/api/?name=${d.first_name}+${d.last_name}&size=100'" 
@@ -1000,123 +1084,189 @@
                         <p style="background:#f9f9f9; padding:1rem; border-radius:8px;">${d.about_me || 'No description provided.'}</p>
                     `;
 
-                    // Set up approve/reject buttons
-                    document.getElementById('modalApproveBtn').onclick = () => {
-                        verifyBiodataFromModal('approve');
-                    };
-                    document.getElementById('modalRejectBtn').onclick = () => {
-                        verifyBiodataFromModal('reject');
-                    };
-                } else {
-                    document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Error loading details</p>';
-                }
-            } catch (e) {
-                document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Connection error</p>';
-            }
-        }
-
-        function closeModal() {
-            document.getElementById('biodataModal').classList.remove('active');
-        }
-
-        async function verifyBiodataFromModal(action) {
-            if (!currentBiodataStudentId) return;
-            if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
-
-            try {
-                const response = await fetch('api/admin?action=verify_biodata', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ studentId: currentBiodataStudentId, action })
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    alert(`Biodata ${action}d successfully!`);
-                    closeModal();
-                    loadPendingBiodatas();
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (e) {
-                alert('Connection error');
-            }
-        }
-
-        // Load real stats
-        async function loadStats() {
-            try {
-                const response = await fetch('api/admin?action=stats');
-                const result = await response.json();
-
-                if (result.success) {
-                    const s = result.stats;
-                    document.getElementById('statTotalUsers').textContent = s.total_users;
-                    document.getElementById('statPending').textContent = s.pending_accounts;
-                    document.getElementById('statVerified').textContent = s.verified_biodatas;
-                    document.getElementById('statMatches').textContent = s.total_matches;
-                }
-            } catch (e) {
-                console.error('Error loading stats:', e);
-            }
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadPendingUsers();
-            loadPendingBiodatas();
-            loadStats(); // Add this
-        });
-
-        // Update Admin Credentials
-        async function updateCredentials(event) {
-            event.preventDefault();
-
-            const newUsername = document.getElementById('newUsername').value.trim();
-            const newPassword = document.getElementById('newPassword').value;
-            const currentPassword = document.getElementById('currentPassword').value;
-
-            if (!newUsername || newUsername.length < 3) {
-                alert('Username must be at least 3 characters');
-                return;
-            }
-
-            if (newPassword && newPassword.length < 6) {
-                alert('Password must be at least 6 characters');
-                return;
-            }
-
-            if (!currentPassword) {
-                alert('Please enter your current password to confirm changes');
-                return;
-            }
-
-            try {
-                const response = await fetch('api/admin?action=update_credentials', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        current_password: currentPassword,
-                        new_username: newUsername,
-                        new_password: newPassword
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert(result.message);
-                    if (result.logout) {
-                        window.location.href = 'admin_login.html';
+                        // Set up approve/reject buttons
+                        document.getElementById('modalApproveBtn').onclick = () => {
+                            verifyBiodataFromModal('approve');
+                        };
+                        document.getElementById('modalRejectBtn').onclick = () => {
+                            verifyBiodataFromModal('reject');
+                        };
+                    } else {
+                        document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Error loading details</p>';
                     }
-                } else {
-                    alert('Error: ' + result.message);
+                } catch (e) {
+                    document.getElementById('biodataDetails').innerHTML = '<p style="color:red;">Connection error</p>';
                 }
-            } catch (e) {
-                alert('Connection error. Please try again.');
             }
-        }
+
+            function closeModal() {
+                document.getElementById('biodataModal').classList.remove('active');
+            }
+
+            async function verifyBiodataFromModal(action) {
+                if (!currentBiodataStudentId) return;
+                if (!confirm(`Are you sure you want to ${action} this biodata?`)) return;
+
+                try {
+                    const response = await fetch('api/admin?action=verify_biodata', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ studentId: currentBiodataStudentId, action })
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(`Biodata ${action}d successfully!`);
+                        closeModal();
+                        loadPendingBiodatas();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (e) {
+                    alert('Connection error');
+                }
+            }
+
+            // Load real stats
+            async function loadStats() {
+                try {
+                    const response = await fetch('api/admin?action=stats');
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const s = result.stats;
+                        document.getElementById('statTotalUsers').textContent = s.total_users;
+                        document.getElementById('statPending').textContent = s.pending_accounts;
+                        document.getElementById('statVerified').textContent = s.verified_biodatas;
+                        document.getElementById('statMatches').textContent = s.total_matches;
+                    }
+                } catch (e) {
+                    console.error('Error loading stats:', e);
+                }
+            }
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                loadPendingUsers();
+                loadPendingBiodatas();
+                loadStats(); // Add this
+            });
+
+            // Update Admin Credentials
+            async function updateCredentials(event) {
+                event.preventDefault();
+
+                const newUsername = document.getElementById('newUsername').value.trim();
+                const newPassword = document.getElementById('newPassword').value;
+                const currentPassword = document.getElementById('currentPassword').value;
+
+                if (!newUsername || newUsername.length < 3) {
+                    alert('Username must be at least 3 characters');
+                    return;
+                }
+
+                if (newPassword && newPassword.length < 6) {
+                    alert('Password must be at least 6 characters');
+                    return;
+                }
+
+                if (!currentPassword) {
+                    alert('Please enter your current password to confirm changes');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('api/admin?action=update_credentials', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            current_password: currentPassword,
+                            new_username: newUsername,
+                            new_password: newPassword
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert(result.message);
+                        if (result.logout) {
+                            window.location.href = 'admin_login.html';
+                        }
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (e) {
+                    alert('Connection error. Please try again.');
+                }
+            }
+            // User Details Modal Logic
+            async function viewUserDetails(studentId) {
+                const modal = document.getElementById('userDetailsModal');
+                const content = document.getElementById('userDetailsContent');
+                modal.style.display = 'block';
+                content.innerHTML = '<div style="text-align:center; padding:2rem;">Loading details...</div>';
+
+                try {
+                    const response = await fetch(`api/admin?action=get_biodata_details&student_id=${studentId}`);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const user = result.data;
+                        content.innerHTML = `
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem;">
+                            <div style="grid-column:span 2; display:flex; align-items:center; gap:1rem; padding-bottom:1rem; border-bottom:1px solid #eee;">
+                                <div style="width:64px; height:64px; background:#e0e7ff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:bold; color:#3730a3;">
+                                    ${user.first_name ? user.first_name[0] : '?'}
+                                </div>
+                                <div>
+                                    <h3 style="margin:0;">${user.first_name} ${user.last_name}</h3>
+                                    <p style="margin:0; color:#666;">${user.student_id}</p>
+                                </div>
+                            </div>
+
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Email</label><div>${user.email || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Phone</label><div>${user.phone || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Gender</label><div>${user.gender || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Date of Birth</label><div>${user.dob || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Religion</label><div>${user.religion || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Batch</label><div>${user.batch_year || 'N/A'}</div></div>
+                            <div><label style="font-weight:600; font-size:0.85rem; color:#666;">Status</label><div>${user.status || 'N/A'}</div></div>
+                            
+                            <div style="grid-column: span 2;">
+                                <label style="font-weight:600; font-size:0.85rem; color:#666;">ID Card Preview</label>
+                                <div style="margin-top:0.5rem; border:1px solid #eee; padding:1rem; border-radius:8px; text-align:center; background:#f9fafb;">
+                                     ${user.id_card_image ?
+                                `<img src="${user.id_card_image.startsWith('http') ? user.id_card_image : 'uploads/' + user.id_card_image}" style="max-width:100%; max-height:300px; border-radius:4px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">` :
+                                '<span style="color:#ef4444; font-weight:500;">No ID Card Uploaded</span>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    } else {
+                        content.innerHTML = '<div style="color:red; text-align:center;">User details not found.</div>';
+                    }
+                } catch (e) {
+                    content.innerHTML = '<div style="color:red; text-align:center;">Error loading details.</div>';
+                }
+            }
     </script>
+
+    <!-- User Details Modal -->
+    <div id="userDetailsModal" class="modal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; overflow-y:auto;">
+        <div
+            style="background:white; max-width:600px; margin:4rem auto; border-radius:12px; padding:2rem; position:relative; box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+            <button onclick="document.getElementById('userDetailsModal').style.display='none'"
+                style="position:absolute; right:1.5rem; top:1.5rem; border:none; background:none; font-size:1.5rem; cursor:pointer; color:#666;">&times;</button>
+            <h2 style="margin-bottom:1.5rem; color:var(--dark); font-size:1.5rem;">User Details</h2>
+            <div id="userDetailsContent">Loading...</div>
+            <div style="margin-top:2rem; text-align:right;">
+                <button class="btn btn-outline-dark"
+                    onclick="document.getElementById('userDetailsModal').style.display='none'">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

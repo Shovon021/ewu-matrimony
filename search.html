@@ -379,7 +379,10 @@
                 const maxAge = maxAgeInput.value;
 
                 const response = await fetch(`api/search?gender=${gender}&religion=${religion}&min_age=${minAge}&max_age=${maxAge}`);
-                const profiles = await response.json();
+                const result = await response.json();
+
+                // API returns { success: true, data: [...] }
+                const profiles = result.data || [];
 
                 // Update count
                 document.querySelector('.results-count strong').textContent = profiles.length;

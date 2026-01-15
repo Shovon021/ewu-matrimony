@@ -403,6 +403,16 @@
 </head>
 
 <body>
+    <!-- SECURITY GATE: Redirect to login if not authenticated -->
+    <script>
+        (function () {
+            const isAdminLoggedIn = localStorage.getItem('admin_logged_in');
+            if (isAdminLoggedIn !== 'true') {
+                window.location.replace('admin_login.html');
+            }
+        })();
+    </script>
+
     <!-- Biodata Details Modal -->
     <div class="modal-overlay" id="biodataModal">
         <div class="modal-content">

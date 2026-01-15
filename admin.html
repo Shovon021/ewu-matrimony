@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="components.css">
 
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
     <style>
         /* Professional Admin Dashboard Styling */
         :root {
@@ -549,15 +552,51 @@
                     </div>
                 </div>
 
+                <!-- Analytics Row -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <!-- Registration Trends Chart -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div class="card-title">📈 Registration Trends (Last 7 Days)</div>
+                        </div>
+                        <div style="padding: 1.5rem; height: 250px;">
+                            <canvas id="registrationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gender Distribution Chart -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <div class="card-title">👥 Gender Distribution</div>
+                        </div>
+                        <div
+                            style="padding: 1.5rem; height: 250px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="genderChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Activity -->
                 <div class="content-card">
                     <div class="card-header">
-                        <div class="card-title">Recent System Logs</div>
+                        <div class="card-title">🔥 Today's Activity</div>
                     </div>
-                    <div style="padding: 1.5rem;">
-                        <div style="display:flex; gap:1rem; margin-bottom:1rem; align-items:center;">
-                            <span style="font-size:0.8rem; color:var(--gray-500);">System</span>
-                            <span style="font-size:0.9rem;"><strong>System:</strong> Daily backup completed
-                                successfully.</span>
+                    <div style="padding: 1.5rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                        <div
+                            style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #dbeafe, #eff6ff); border-radius: 12px;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: #2563eb;" id="todaySignups">0</div>
+                            <div style="color: #64748b; font-weight: 500;">New Signups</div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #fce7f3, #fdf2f8); border-radius: 12px;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: #db2777;" id="todayInterests">0
+                            </div>
+                            <div style="color: #64748b; font-weight: 500;">New Interests</div>
+                        </div>
+                        <div
+                            style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #d1fae5, #ecfdf5); border-radius: 12px;">
+                            <div style="font-size: 2.5rem; font-weight: 700; color: #059669;" id="todayMessages">0</div>
+                            <div style="color: #64748b; font-weight: 500;">Contact Messages</div>
                         </div>
                     </div>
                 </div>
@@ -642,8 +681,42 @@
                 <div class="content-card">
                     <div class="card-header">
                         <div class="card-title">All Users</div>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="text" id="userSearchInput" placeholder="Search by name, ID, email..."
+                                style="padding: 0.5rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px; width: 250px;"
+                                onkeyup="if(event.key === 'Enter') loadAllUsers()">
+                            <select id="userStatusFilter" onchange="loadAllUsers()"
+                                style="padding: 0.5rem 1rem; border: 1px solid var(--gray-300); border-radius: 8px;">
+                                <option value="all">All Status</option>
+                                <option value="verified">Verified</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                            <button class="btn btn-sm btn-primary" onclick="loadAllUsers()">Search</button>
+                        </div>
                     </div>
-                    <div style="padding:2rem; text-align:center;">User Management Module</div>
+                    <table class="data-table" id="allUsersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Student ID</th>
+                                <th>Email</th>
+                                <th>Batch</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allUsersTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding:2rem;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Pagination -->
+                    <div id="usersPagination" style="padding:1rem; display:flex; justify-content:center; gap:0.5rem;">
+                    </div>
                 </div>
             </div>
             <div id="view-blog" class="view-section" style="display: none;">
@@ -729,6 +802,7 @@
 
             // Auto-load data based on view
             if (viewId === 'messages') loadMessages();
+            if (viewId === 'users') loadAllUsers();
         }
 
         let currentMessages = [];
@@ -1174,7 +1248,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadPendingUsers();
             loadPendingBiodatas();
-            loadStats(); // Add this
+            loadStats();
+            loadAnalytics(); // Load charts and today's activity
         });
 
         // Update Admin Credentials
@@ -1223,6 +1298,217 @@
                 }
             } catch (e) {
                 alert('Connection error. Please try again.');
+            }
+        }
+
+        // ========== USER MANAGEMENT ==========
+        let currentUsersPage = 1;
+
+        async function loadAllUsers(page = 1) {
+            currentUsersPage = page;
+            const search = document.getElementById('userSearchInput').value.trim();
+            const status = document.getElementById('userStatusFilter').value;
+            const tbody = document.getElementById('allUsersTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Loading...</td></tr>';
+
+            try {
+                const response = await fetch(`api/admin?action=get_all_users&search=${encodeURIComponent(search)}&status=${status}&page=${page}&limit=15`);
+                const result = await response.json();
+
+                if (result.success && result.users) {
+                    if (result.users.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--gray-500);">No users found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = result.users.map(u => {
+                        const photo = u.photo ? (u.photo.startsWith('http') ? u.photo : 'uploads/' + u.photo)
+                            : `https://ui-avatars.com/api/?name=${u.first_name}+${u.last_name}&background=random&size=40`;
+                        const statusClass = u.verification_status === 'verified' ? 'status-badge-verified' :
+                            (u.verification_status === 'pending' ? 'status-badge-pending' : 'status-badge-rejected');
+                        const statusLabel = u.verification_status.charAt(0).toUpperCase() + u.verification_status.slice(1);
+                        const joined = new Date(u.created_at).toLocaleDateString();
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:0.75rem;">
+                                        <img src="${photo}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                                        <div>
+                                            <strong>${u.first_name} ${u.last_name}</strong>
+                                            <div style="font-size:0.8rem; color:var(--gray-500);">${u.gender || '-'}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>${u.student_id}</td>
+                                <td style="max-width:150px; overflow:hidden; text-overflow:ellipsis;">${u.email || '-'}</td>
+                                <td>${u.batch_year || '-'}</td>
+                                <td><span class="${statusClass}">${statusLabel}</span></td>
+                                <td>${joined}</td>
+                                <td>
+                                    <div style="display:flex; gap:0.5rem;">
+                                        <button onclick="window.open('profile.html?id=${u.id}', '_blank')" 
+                                            class="action-btn" title="View Profile" style="background:#3b82f6; color:#fff; padding:0.4rem 0.6rem; border-radius:6px;">👁️</button>
+                                        ${u.verification_status !== 'suspended' ?
+                                `<button onclick="suspendUser(${u.id}, 'suspend')" class="action-btn" title="Suspend" 
+                                                style="background:#f59e0b; color:#fff; padding:0.4rem 0.6rem; border-radius:6px;">⏸️</button>` :
+                                `<button onclick="suspendUser(${u.id}, 'unsuspend')" class="action-btn" title="Unsuspend" 
+                                                style="background:#10b981; color:#fff; padding:0.4rem 0.6rem; border-radius:6px;">▶️</button>`}
+                                        <button onclick="deleteUser(${u.id}, '${u.first_name} ${u.last_name}')" 
+                                            class="action-btn" title="Delete" style="background:#ef4444; color:#fff; padding:0.4rem 0.6rem; border-radius:6px;">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    // Pagination
+                    renderUsersPagination(result.pagination);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">Error loading users</td></tr>';
+                }
+            } catch (e) {
+                console.error('Load users error:', e);
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:red;">Connection error</td></tr>';
+            }
+        }
+
+        function renderUsersPagination(pagination) {
+            const container = document.getElementById('usersPagination');
+            if (!pagination || pagination.pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            if (pagination.page > 1) {
+                html += `<button onclick="loadAllUsers(${pagination.page - 1})" class="btn btn-sm btn-outline">← Prev</button>`;
+            }
+            html += `<span style="padding: 0.5rem 1rem; color: var(--gray-600);">Page ${pagination.page} of ${pagination.pages} (${pagination.total} users)</span>`;
+            if (pagination.page < pagination.pages) {
+                html += `<button onclick="loadAllUsers(${pagination.page + 1})" class="btn btn-sm btn-outline">Next →</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Are you sure you want to DELETE user "${userName}"? This cannot be undone!`)) return;
+
+            try {
+                const response = await fetch('api/admin?action=delete_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('User deleted successfully');
+                    loadAllUsers(currentUsersPage);
+                    loadStats(); // Refresh stats
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error');
+            }
+        }
+
+        async function suspendUser(userId, action) {
+            const actionText = action === 'suspend' ? 'suspend' : 'unsuspend';
+            if (!confirm(`Are you sure you want to ${actionText} this user?`)) return;
+
+            try {
+                const response = await fetch('api/admin?action=suspend_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, action })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    loadAllUsers(currentUsersPage);
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (e) {
+                alert('Connection error');
+            }
+        }
+
+        // ========== ANALYTICS ==========
+        let registrationChart = null;
+        let genderChart = null;
+
+        async function loadAnalytics() {
+            try {
+                const response = await fetch('api/admin?action=get_analytics');
+                const result = await response.json();
+
+                if (result.success && result.analytics) {
+                    const data = result.analytics;
+
+                    // Update Today's Activity
+                    document.getElementById('todaySignups').textContent = data.todayActivity?.signups || 0;
+                    document.getElementById('todayInterests').textContent = data.todayActivity?.interests || 0;
+                    document.getElementById('todayMessages').textContent = data.todayActivity?.messages || 0;
+
+                    // Registration Trends Chart
+                    const trendsLabels = data.registrationTrends?.map(t => {
+                        const d = new Date(t.date);
+                        return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    }) || [];
+                    const trendsData = data.registrationTrends?.map(t => t.count) || [];
+
+                    if (registrationChart) registrationChart.destroy();
+                    const ctx1 = document.getElementById('registrationChart').getContext('2d');
+                    registrationChart = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: trendsLabels.length ? trendsLabels : ['No data'],
+                            datasets: [{
+                                label: 'New Registrations',
+                                data: trendsData.length ? trendsData : [0],
+                                borderColor: '#f43f5e',
+                                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                        }
+                    });
+
+                    // Gender Distribution Chart
+                    const males = data.genderDistribution?.find(g => g.gender === 'male')?.count || 0;
+                    const females = data.genderDistribution?.find(g => g.gender === 'female')?.count || 0;
+
+                    if (genderChart) genderChart.destroy();
+                    const ctx2 = document.getElementById('genderChart').getContext('2d');
+                    genderChart = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Male', 'Female'],
+                            datasets: [{
+                                data: [males, females],
+                                backgroundColor: ['#3b82f6', '#f43f5e'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Load analytics error:', e);
             }
         }
 

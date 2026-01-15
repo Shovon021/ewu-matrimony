@@ -34,6 +34,15 @@ export default async function handler(req, res) {
                 return handleGetMessages(req, res);
             case 'update_credentials':
                 return handleUpdateCredentials(req, res);
+            // NEW: User Management & Analytics
+            case 'get_all_users':
+                return handleGetAllUsers(req, res);
+            case 'get_analytics':
+                return handleGetAnalytics(req, res);
+            case 'delete_user':
+                return handleDeleteUser(req, res);
+            case 'suspend_user':
+                return handleSuspendUser(req, res);
             default:
                 return res.status(400).json({ success: false, message: 'Invalid action' });
         }
@@ -263,4 +272,175 @@ async function handleUpdateCredentials(req, res) {
         message: 'Credentials validated. To change credentials, update Vercel environment variables.',
         logout: false
     });
+}
+
+// ========== GET ALL USERS ==========
+async function handleGetAllUsers(req, res) {
+    const { search, status, page = 1, limit = 20 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    try {
+        let sql = `
+            SELECT u.id, u.student_id, u.first_name, u.last_name, u.email, u.phone,
+                   u.gender, u.dob, u.religion, u.batch_year, u.status, 
+                   u.verification_status, u.created_at,
+                   p.photo, p.biodata_status
+            FROM users u
+            LEFT JOIN profiles p ON p.user_id = u.id
+            WHERE 1=1
+        `;
+        const params = [];
+
+        // Search filter
+        if (search) {
+            sql += ` AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.student_id LIKE ? OR u.email LIKE ?)`;
+            const searchTerm = `%${search}%`;
+            params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+        }
+
+        // Status filter
+        if (status && status !== 'all') {
+            sql += ` AND u.verification_status = ?`;
+            params.push(status);
+        }
+
+        sql += ` ORDER BY u.created_at DESC LIMIT ? OFFSET ?`;
+        params.push(parseInt(limit), offset);
+
+        const users = await query(sql, params);
+
+        // Get total count for pagination
+        let countSql = `SELECT COUNT(*) as total FROM users WHERE 1=1`;
+        const countParams = [];
+        if (search) {
+            countSql += ` AND (first_name LIKE ? OR last_name LIKE ? OR student_id LIKE ?)`;
+            const searchTerm = `%${search}%`;
+            countParams.push(searchTerm, searchTerm, searchTerm);
+        }
+        if (status && status !== 'all') {
+            countSql += ` AND verification_status = ?`;
+            countParams.push(status);
+        }
+        const countResult = await query(countSql, countParams);
+        const total = countResult[0]?.total || 0;
+
+        return res.status(200).json({
+            success: true,
+            users,
+            pagination: {
+                page: parseInt(page),
+                limit: parseInt(limit),
+                total,
+                pages: Math.ceil(total / parseInt(limit))
+            }
+        });
+    } catch (e) {
+        console.error('Get all users error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
+}
+
+// ========== GET ANALYTICS ==========
+async function handleGetAnalytics(req, res) {
+    try {
+        // Gender distribution
+        const genderData = await query(`
+            SELECT gender, COUNT(*) as count 
+            FROM users 
+            WHERE verification_status = 'verified'
+            GROUP BY gender
+        `);
+
+        // Registration trends (last 7 days)
+        const trendsData = await query(`
+            SELECT DATE(created_at) as date, COUNT(*) as count
+            FROM users
+            WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY DATE(created_at)
+            ORDER BY date ASC
+        `);
+
+        // Today's activity
+        const todaySignups = await query(`
+            SELECT COUNT(*) as count FROM users 
+            WHERE DATE(created_at) = CURDATE()
+        `);
+        const todayMessages = await query(`
+            SELECT COUNT(*) as count FROM contact_messages 
+            WHERE DATE(created_at) = CURDATE()
+        `);
+        let todayInterests = 0;
+        try {
+            const interestResult = await query(`
+                SELECT COUNT(*) as count FROM interests 
+                WHERE DATE(created_at) = CURDATE()
+            `);
+            todayInterests = interestResult[0]?.count || 0;
+        } catch (e) { /* interests table might not exist */ }
+
+        return res.status(200).json({
+            success: true,
+            analytics: {
+                genderDistribution: genderData,
+                registrationTrends: trendsData,
+                todayActivity: {
+                    signups: todaySignups[0]?.count || 0,
+                    messages: todayMessages[0]?.count || 0,
+                    interests: todayInterests
+                }
+            }
+        });
+    } catch (e) {
+        console.error('Get analytics error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
+}
+
+// ========== DELETE USER ==========
+async function handleDeleteUser(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+
+    const { userId } = req.body || {};
+    if (!userId) {
+        return res.status(400).json({ success: false, message: 'User ID required' });
+    }
+
+    try {
+        // Delete profile first (foreign key)
+        await execute('DELETE FROM profiles WHERE user_id = ?', [userId]);
+        // Delete user
+        await execute('DELETE FROM users WHERE id = ?', [userId]);
+
+        return res.status(200).json({ success: true, message: 'User deleted successfully' });
+    } catch (e) {
+        console.error('Delete user error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
+}
+
+// ========== SUSPEND USER ==========
+async function handleSuspendUser(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ success: false, message: 'Method not allowed' });
+    }
+
+    const { userId, action } = req.body || {}; // action: 'suspend' or 'unsuspend'
+    if (!userId) {
+        return res.status(400).json({ success: false, message: 'User ID required' });
+    }
+
+    try {
+        const newStatus = action === 'unsuspend' ? 'verified' : 'suspended';
+        await execute('UPDATE users SET verification_status = ? WHERE id = ?', [newStatus, userId]);
+
+        return res.status(200).json({
+            success: true,
+            message: action === 'unsuspend' ? 'User unsuspended' : 'User suspended'
+        });
+    } catch (e) {
+        console.error('Suspend user error:', e);
+        return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
+    }
 }

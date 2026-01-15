@@ -56,22 +56,43 @@ async function handleGetProfile(req, res) {
     // I will ask the user to update frontend to send student_id in query.
 
     const studentId = req.query.student_id;
+    const publicId = req.query.id; // For public profile viewing
+    const action = req.query.action;
 
+    // Handle public profile viewing by user ID
+    if (action === 'get_public' && publicId) {
+        const profiles = await query(`
+            SELECT p.*, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year
+            FROM users u
+            LEFT JOIN profiles p ON p.user_id = u.id
+            WHERE u.id = ? AND u.verification_status = 'verified'
+        `, [publicId]);
+
+        if (profiles.length === 0) {
+            return res.status(404).json({ success: false, message: 'Profile not found' });
+        }
+
+        return res.status(200).json({ success: true, data: profiles[0] });
+    }
+
+    // Handle own profile viewing by student_id
     if (!studentId) {
-        // If no ID provided, we can't do anything without session.
         return res.status(400).json({ success: false, message: 'Student ID required' });
     }
 
+    // Use LEFT JOIN so we return user data even if no profile exists yet
     const profiles = await query(`
-        SELECT p.*, u.student_id, u.first_name, u.last_name, u.email
-        FROM profiles p
-        JOIN users u ON p.user_id = u.id
+        SELECT 
+            u.id as user_id, u.student_id, u.first_name, u.last_name, u.email, u.gender, u.dob, u.religion, u.batch_year, u.phone,
+            p.*
+        FROM users u
+        LEFT JOIN profiles p ON p.user_id = u.id
         WHERE u.student_id = ?
     `, [studentId]);
 
     if (profiles.length === 0) {
-        // Maybe user exists but no profile?
-        return res.status(404).json({ success: false, message: 'Profile not found' });
+        // User not found at all
+        return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     return res.status(200).json({ success: true, data: profiles[0] });

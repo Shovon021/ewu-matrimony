@@ -511,9 +511,11 @@
 
                 let apiEndpoint;
                 if (profileId) {
-                    apiEndpoint = 'api/profile/get_public.php?id=' + profileId;
+                    // Viewing someone else's profile (public view)
+                    apiEndpoint = 'api/profile?action=get_public&id=' + profileId;
                 } else if (myStudentId) {
-                    apiEndpoint = 'api/profile/get.php?student_id=' + myStudentId;
+                    // Viewing own profile
+                    apiEndpoint = 'api/profile?student_id=' + myStudentId;
                 } else {
                     // Not logged in and no ID specified
                     window.location.href = 'login.html';

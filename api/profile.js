@@ -152,8 +152,12 @@ async function handleSaveProfile(req, res) {
 
             updateFields.forEach(field => {
                 if (data[field] !== undefined) {
+                    let value = data[field];
+                    // Convert empty strings to null for database compatibility (especially ENUMs)
+                    if (value === '') value = null;
+
                     sql += `${field} = ?, `;
-                    params.push(data[field]);
+                    params.push(value);
                 }
             });
 

@@ -212,7 +212,13 @@ async function handleVerifyBiodata(req, res) {
 
     try {
         const status = action === 'approve' ? 'verified' : 'rejected';
-        await execute('UPDATE users SET biodata_status = ? WHERE student_id = ?', [status, studentId]);
+        // Fix: Update profiles table, joining with users to find by student_id
+        await execute(`
+            UPDATE profiles p
+            JOIN users u ON p.user_id = u.id
+            SET p.biodata_status = ?
+            WHERE u.student_id = ?
+        `, [status, studentId]);
 
         return res.status(200).json({ success: true, message: `Biodata ${status} successfully` });
     } catch (e) {

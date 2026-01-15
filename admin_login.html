@@ -175,6 +175,7 @@
                     // Save auth token for serverless session persistence
                     localStorage.setItem('admin_logged_in', 'true');
                     localStorage.setItem('admin_username', username);
+                    localStorage.setItem('admin_token', result.token); // Store secure token
                     window.location.href = 'admin.html'; // redirect to dashboard
                 } else {
                     errorMsg.style.display = 'block';

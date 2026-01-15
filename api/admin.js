@@ -1,11 +1,51 @@
 import { query, execute } from './_lib/db.js';
+import crypto from 'crypto';
+
+// ========== ADMIN TOKEN AUTHENTICATION ==========
+// Simple token-based auth for serverless environment
+// Tokens are generated on login and must be included in requests
+
+// In-memory token store (resets on cold start, but acceptable for admin)
+// For production, consider using a database or Redis
+const ADMIN_TOKENS = new Map();
+const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function generateAdminToken() {
+    return crypto.randomBytes(32).toString('hex');
+}
+
+function validateAdminToken(req) {
+    const authHeader = req.headers['authorization'] || req.headers['x-admin-token'];
+    const token = authHeader?.replace('Bearer ', '');
+
+    if (!token) return false;
+
+    const tokenData = ADMIN_TOKENS.get(token);
+    if (!tokenData) return false;
+
+    // Check if expired
+    if (Date.now() > tokenData.expiresAt) {
+        ADMIN_TOKENS.delete(token);
+        return false;
+    }
+
+    return true;
+}
+
+function requireAuth(req, res) {
+    if (!validateAdminToken(req)) {
+        res.status(401).json({ success: false, message: 'Unauthorized. Please login again.' });
+        return false;
+    }
+    return true;
+}
 
 // Consolidated Admin API - handles all admin endpoints via ?action= parameter
 export default async function handler(req, res) {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Admin-Token');
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
@@ -58,6 +98,7 @@ export default async function handler(req, res) {
 
 // ========== GET MATCH HISTORY ==========
 async function handleGetMatchHistory(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         const matches = await query(`
             SELECT 
@@ -98,10 +139,21 @@ async function handleLogin(req, res) {
     const adminPassword = process.env.ADMIN_PASSWORD || 'Rukeeey';
 
     if (username === adminUsername && password === adminPassword) {
+        // Generate secure token
+        const token = generateAdminToken();
+
+        // Store token with expiry
+        ADMIN_TOKENS.set(token, {
+            username: adminUsername,
+            createdAt: Date.now(),
+            expiresAt: Date.now() + TOKEN_EXPIRY_MS
+        });
+
         return res.status(200).json({
             success: true,
             message: 'Login successful',
-            admin: { username: adminUsername }
+            admin: { username: adminUsername },
+            token: token // Client must store and send this with requests
         });
     } else {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -110,6 +162,7 @@ async function handleLogin(req, res) {
 
 // ========== STATS ==========
 async function handleStats(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         const totalUsersResult = await query('SELECT COUNT(*) as count FROM users');
         const totalUsers = totalUsersResult[0]?.count || 0;
@@ -145,6 +198,7 @@ async function handleStats(req, res) {
 
 // ========== GET PENDING USERS ==========
 async function handleGetPending(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         const users = await query(`
             SELECT student_id, first_name, last_name, status, batch_year, id_card_image 
@@ -167,6 +221,7 @@ async function handleGetPending(req, res) {
 
 // ========== GET PENDING BIODATAS ==========
 async function handleGetPendingBiodatas(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         const biodatas = await query(`
             SELECT u.student_id, u.first_name, u.last_name, u.gender, p.occupation, p.updated_at
@@ -184,6 +239,7 @@ async function handleGetPendingBiodatas(req, res) {
 
 // ========== GET BIODATA DETAILS ==========
 async function handleGetBiodataDetails(req, res) {
+    if (!requireAuth(req, res)) return;
     const studentId = req.query.student_id;
     if (!studentId) {
         return res.status(400).json({ success: false, message: 'Student ID required' });
@@ -219,6 +275,7 @@ async function handleGetBiodataDetails(req, res) {
 
 // ========== VERIFY USER ==========
 async function handleVerifyUser(req, res) {
+    if (!requireAuth(req, res)) return;
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
@@ -241,6 +298,7 @@ async function handleVerifyUser(req, res) {
 
 // ========== VERIFY BIODATA ==========
 async function handleVerifyBiodata(req, res) {
+    if (!requireAuth(req, res)) return;
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
@@ -269,6 +327,7 @@ async function handleVerifyBiodata(req, res) {
 
 // ========== GET MESSAGES ==========
 async function handleGetMessages(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         const messages = await query(`
             SELECT id, name, email, subject, message, created_at
@@ -286,6 +345,8 @@ async function handleGetMessages(req, res) {
 
 // ========== UPDATE CREDENTIALS ==========
 async function handleUpdateCredentials(req, res) {
+    if (!requireAuth(req, res)) return;
+
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
@@ -307,6 +368,9 @@ async function handleUpdateCredentials(req, res) {
 
 // ========== GET ALL USERS ==========
 async function handleGetAllUsers(req, res) {
+    // Require authentication
+    if (!requireAuth(req, res)) return;
+
     const { search, status, page = 1, limit = 20 } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
@@ -375,6 +439,7 @@ async function handleGetAllUsers(req, res) {
 
 // ========== GET ANALYTICS ==========
 async function handleGetAnalytics(req, res) {
+    if (!requireAuth(req, res)) return;
     try {
         // Gender distribution
         const genderData = await query(`
@@ -431,6 +496,9 @@ async function handleGetAnalytics(req, res) {
 
 // ========== DELETE USER ==========
 async function handleDeleteUser(req, res) {
+    // Require authentication
+    if (!requireAuth(req, res)) return;
+
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
@@ -455,6 +523,9 @@ async function handleDeleteUser(req, res) {
 
 // ========== SUSPEND USER ==========
 async function handleSuspendUser(req, res) {
+    // Require authentication
+    if (!requireAuth(req, res)) return;
+
     if (req.method !== 'POST') {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }

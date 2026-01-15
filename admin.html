@@ -503,8 +503,7 @@
             // Clear client-side session
             localStorage.removeItem('admin_logged_in');
             localStorage.removeItem('admin_username');
-            // Optional: Call server cleanup if needed
-            // await fetch('api/admin/logout.php'); 
+            localStorage.removeItem('admin_token'); // Clear auth token
             window.location.href = 'admin_login.html';
         }
     </script>
@@ -807,6 +806,23 @@
             window.location.href = 'admin_login.html';
         }
 
+        // Get auth headers for protected API calls
+        function getAuthHeaders() {
+            const token = localStorage.getItem('admin_token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        // Handle 401 Unauthorized responses
+        function handleAuthError() {
+            alert('Session expired. Please login again.');
+            localStorage.removeItem('admin_logged_in');
+            localStorage.removeItem('admin_token');
+            window.location.href = 'admin_login.html';
+        }
+
         // View Switching Logic
         function switchView(viewId, linkElement) {
             // Update Menu Active State
@@ -917,7 +933,9 @@
         async function loadPendingUsers() {
             try {
                 console.log('Fetching pending users...');
-                const response = await fetch('api/admin?action=get_pending');
+                const response = await fetch('api/admin?action=get_pending', {
+                    headers: getAuthHeaders()
+                });
                 const text = await response.text();
                 console.log('API Response:', text);
 
@@ -995,9 +1013,14 @@
             try {
                 const response = await fetch('api/admin?action=verify_user', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ studentId, action })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
 
                 const result = await response.json();
 
@@ -1080,7 +1103,15 @@
         // ========== BIODATA VERIFICATION ==========
         async function loadPendingBiodatas() {
             try {
-                const response = await fetch('api/admin?action=get_pending_biodatas');
+                const response = await fetch('api/admin?action=get_pending_biodatas', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const biodatas = await response.json();
 
                 const tbody = document.querySelector('#biodataTable tbody');
@@ -1134,9 +1165,14 @@
             try {
                 const response = await fetch('api/admin?action=verify_biodata', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ studentId, action })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
 
                 const result = await response.json();
 
@@ -1226,9 +1262,15 @@
             try {
                 const response = await fetch('api/admin?action=verify_biodata', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ studentId: currentBiodataStudentId, action })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1247,7 +1289,13 @@
         async function loadStats() {
             try {
                 console.log('Loading stats...');
-                const response = await fetch('api/admin?action=stats');
+                const response = await fetch('api/admin?action=stats', {
+                    headers: getAuthHeaders()
+                });
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
                 const result = await response.json();
                 console.log('Stats result:', result);
 
@@ -1317,13 +1365,18 @@
             try {
                 const response = await fetch('api/admin?action=update_credentials', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({
                         current_password: currentPassword,
                         new_username: newUsername,
                         new_password: newPassword
                     })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
 
                 const result = await response.json();
 
@@ -1351,7 +1404,15 @@
             tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem;">Loading...</td></tr>';
 
             try {
-                const response = await fetch(`api/admin?action=get_all_users&search=${encodeURIComponent(search)}&status=${status}&page=${page}&limit=15`);
+                const response = await fetch(`api/admin?action=get_all_users&search=${encodeURIComponent(search)}&status=${status}&page=${page}&limit=15`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success && result.users) {
@@ -1441,9 +1502,15 @@
             try {
                 const response = await fetch('api/admin?action=delete_user', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ userId })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1465,9 +1532,15 @@
             try {
                 const response = await fetch('api/admin?action=suspend_user', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getAuthHeaders(),
                     body: JSON.stringify({ userId, action })
                 });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1487,7 +1560,15 @@
 
         async function loadAnalytics() {
             try {
-                const response = await fetch('api/admin?action=get_analytics');
+                const response = await fetch('api/admin?action=get_analytics', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success && result.analytics) {
@@ -1556,13 +1637,66 @@
             }
         }
 
+        // ========== MESSAGES ==========
+        async function loadMessages() {
+            const tbody = document.querySelector('#messagesTable tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem;">Loading messages...</td></tr>';
+
+            try {
+                const response = await fetch('api/admin?action=get_messages', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (result.success && result.messages) {
+                    if (result.messages.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:var(--gray-500);">No messages found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = result.messages.map(m => `
+                        <tr>
+                            <td>${new Date(m.created_at).toLocaleDateString()} ${new Date(m.created_at).toLocaleTimeString()}</td>
+                            <td>${m.name}</td>
+                            <td>
+                                <div>${m.email}</div>
+                                <div style="font-size:0.8rem; color:var(--gray-500);">${m.phone || ''}</div>
+                            </td>
+                            <td>${m.subject}</td>
+                            <td>
+                                <div style="max-height:100px; overflow-y:auto; font-size:0.9rem;">${m.message}</div>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem; color:red;">Error loading messages</td></tr>';
+                }
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem; color:red;">Connection error: ${e.message}</td></tr>`;
+            }
+        }
+
         // ========== MATCH HISTORY ==========
         async function loadMatchHistory() {
             const tbody = document.getElementById('matchesTableBody');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:2rem;">Loading matches...</td></tr>';
 
             try {
-                const response = await fetch('api/admin?action=get_match_history');
+                const response = await fetch('api/admin?action=get_match_history', {
+                    headers: getAuthHeaders()
+                });
+
+                if (response.status === 401) {
+                    handleAuthError();
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success && result.matches) {

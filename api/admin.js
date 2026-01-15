@@ -1,40 +1,59 @@
 import { query, execute } from './_lib/db.js';
 import crypto from 'crypto';
 
-// ========== ADMIN TOKEN AUTHENTICATION ==========
-// Simple token-based auth for serverless environment
-// Tokens are generated on login and must be included in requests
-
-// In-memory token store (resets on cold start, but acceptable for admin)
-// For production, consider using a database or Redis
-const ADMIN_TOKENS = new Map();
-const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+// ========== ADMIN TOKEN AUTHENTICATION (STATELESS) ==========
+// Serverless-friendly: Uses HMAC signature instead of in-memory store
+const ADMIN_SECRET = process.env.ADMIN_PASSWORD || 'Rukeeey'; // Secret key for signing
 
 function generateAdminToken() {
-    return crypto.randomBytes(32).toString('hex');
+    const payload = JSON.stringify({
+        role: 'admin',
+        created: Date.now(),
+        expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+    });
+
+    // Create base64 payload
+    const data = Buffer.from(payload).toString('base64');
+
+    // Sign the payload
+    const signature = crypto
+        .createHmac('sha256', ADMIN_SECRET)
+        .update(data)
+        .digest('hex');
+
+    // Return format: payload.signature
+    return `${data}.${signature}`;
 }
 
 function validateAdminToken(req) {
     const authHeader = req.headers['authorization'] || req.headers['x-admin-token'];
     const token = authHeader?.replace('Bearer ', '');
 
-    if (!token) return false;
+    if (!token || !token.includes('.')) return false;
 
-    const tokenData = ADMIN_TOKENS.get(token);
-    if (!tokenData) return false;
+    const [data, signature] = token.split('.');
 
-    // Check if expired
-    if (Date.now() > tokenData.expiresAt) {
-        ADMIN_TOKENS.delete(token);
+    // 1. Verify signature
+    const expectedSignature = crypto
+        .createHmac('sha256', ADMIN_SECRET)
+        .update(data)
+        .digest('hex');
+
+    if (signature !== expectedSignature) return false;
+
+    // 2. Check expiration
+    try {
+        const payload = JSON.parse(Buffer.from(data, 'base64').toString());
+        if (Date.now() > payload.expires) return false;
+        return true;
+    } catch (e) {
         return false;
     }
-
-    return true;
 }
 
 function requireAuth(req, res) {
     if (!validateAdminToken(req)) {
-        res.status(401).json({ success: false, message: 'Unauthorized. Please login again.' });
+        res.status(401).json({ success: false, message: 'Unauthorized or session expired.' });
         return false;
     }
     return true;

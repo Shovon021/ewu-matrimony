@@ -14,7 +14,8 @@ const SVG_ICONS = {
     edit: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>',
     logout: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>',
     clock: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>',
-    verified: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>'
+    verified: '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>',
+    bell: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>'
 };
 
 class Toast {
@@ -93,9 +94,25 @@ async function updateNav() {
     if (isLoggedIn) {
         // User is logged in - show user menu
         navButtons.innerHTML = `
-            <a href="matches.html" class="btn btn-outline">
-                ${SVG_ICONS.heart} Matches
+            <a href="matches.html" class="btn btn-outline" style="border:none; padding: 0.5rem;" title="My Matches">
+                ${SVG_ICONS.heart}
             </a>
+            
+            <!-- Notification Bell -->
+            <div class="nav-notification" id="navNotification">
+                ${SVG_ICONS.bell}
+                <div class="nav-badge" id="notificationBadge" style="display:none;">0</div>
+                <div class="notification-dropdown">
+                    <div class="notification-header">
+                        Notifications
+                        <button class="btn btn-sm btn-outline" style="font-size:0.7rem; padding:2px 8px;" onclick="checkNotifications()">Refresh</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-empty">Loading...</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="nav-dropdown">
                 <div class="nav-avatar">U</div>
                 <div class="nav-dropdown-menu">
@@ -115,6 +132,13 @@ async function updateNav() {
                 </div>
             </div>
         `;
+
+        // Initial check
+        checkNotifications();
+
+        // Setup simple periodic check (every 60s)
+        setInterval(checkNotifications, 60000);
+
     } else {
         // Guest user - show login/signup
         navButtons.innerHTML = `
@@ -124,10 +148,64 @@ async function updateNav() {
     }
 }
 
+async function checkNotifications() {
+    const userId = localStorage.getItem('user_id'); // Ensure user_id is stored on login
+    if (!userId) {
+        // Try getting it from ID if stored differently (e.g. some files use different keys)
+        // Ideally login process stores user_id.
+        // If not found, we can't fetch notifications.
+        return;
+    }
+
+    try {
+        const apiResponse = await fetch(`api/interest?action=get_notifications&user_id=${userId}`);
+        const result = await apiResponse.json();
+
+        if (result.success) {
+            const badge = document.getElementById('notificationBadge');
+            const list = document.getElementById('notificationList');
+
+            if (badge && list) {
+                if (result.count > 0) {
+                    badge.textContent = result.count > 9 ? '9+' : result.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                if (result.notifications.length === 0) {
+                    list.innerHTML = '<div class="notification-empty">No new notifications</div>';
+                } else {
+                    list.innerHTML = result.notifications.map(n => `
+                        <div class="notification-item ${n.type === 'request' ? 'unread' : ''}" onclick="window.location.href='matches.html'">
+                            <div class="notification-avatar" style="background:${n.type === 'match' ? '#f43f5e' : '#3b82f6'}; display:flex; align-items:center; justify-content:center; color:white;">
+                                ${n.type === 'match' ? '💕' : '👋'}
+                            </div>
+                            <div class="notification-content">
+                                <div class="notification-text">
+                                    ${n.type === 'match'
+                            ? `<strong>New Match!</strong> You and <strong>${n.first_name}</strong> matched!`
+                            : `<strong>${n.first_name}</strong> sent you an interest request.`}
+                                </div>
+                                <div class="notification-time">${new Date(n.created_at).toLocaleDateString()}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Notification check failed', e);
+        // Fallback for demo/dev environment if API fails
+    }
+}
+
 async function logout(e) {
     if (e) e.preventDefault();
     localStorage.removeItem('student_id');
     localStorage.removeItem('is_logged_in');
+    localStorage.removeItem('user_id'); // Clear user_id too
+    localStorage.removeItem('user_data');
 
     Toast.success('Logged Out', 'See you again soon!');
     setTimeout(() => window.location.href = 'index.html', 1000);

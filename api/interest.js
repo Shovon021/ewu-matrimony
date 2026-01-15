@@ -21,12 +21,65 @@ export default async function handler(req, res) {
                 return handleMyMatches(req, res);
             case 'check_match':
                 return handleCheckMatch(req, res);
+            case 'get_notifications':
+                return handleGetNotifications(req, res);
             default:
                 return res.status(400).json({ success: false, message: 'Invalid action' });
         }
     } catch (error) {
         console.error('Interest API error:', error);
         return res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+    }
+}
+
+// ... existing handlers ...
+
+// ========== GET NOTIFICATIONS ==========
+async function handleGetNotifications(req, res) {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+        return res.status(400).json({ success: false, message: 'User ID required' });
+    }
+
+    try {
+        // Get pending PROPOSALS received
+        const pending = await query(`
+            SELECT 
+                i.id, i.created_at, 'request' as type,
+                u.first_name, u.last_name
+            FROM interests i
+            JOIN users u ON i.sender_id = u.id
+            WHERE i.receiver_id = ? AND i.status = 'pending'
+            ORDER BY i.created_at DESC
+        `, [user_id]);
+
+        // Get new MATCHES (where user is sender OR receiver)
+        // For simplicity, we just show all matches as "You have a match!"
+        // In a real app, we'd have an 'is_read' flag.
+        const matches = await query(`
+            SELECT 
+                i.id, i.created_at, 'match' as type,
+                u.first_name, u.last_name
+            FROM interests i
+            JOIN users u ON (i.sender_id = u.id OR i.receiver_id = u.id)
+            WHERE (i.receiver_id = ? OR i.sender_id = ?) 
+              AND i.status = 'matched' 
+              AND u.id != ? -- Exclude self
+            ORDER BY i.created_at DESC
+            LIMIT 5
+        `, [user_id, user_id, user_id]);
+
+        const notifications = [...pending, ...matches].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        return res.status(200).json({
+            success: true,
+            count: pending.length, // Only count pending requests as "unread" for now to avoid annoyance
+            notifications
+        });
+    } catch (e) {
+        console.error('Get notifications error:', e);
+        return res.status(500).json({ success: false, message: 'Database error' });
     }
 }
 

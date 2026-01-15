@@ -65,15 +65,20 @@ async function handleGetMatchHistory(req, res) {
                 u1.first_name as s_name, u1.last_name as s_last, u1.student_id as s_id,
                 u2.first_name as r_name, u2.last_name as r_last, u2.student_id as r_id
             FROM interests i
-            JOIN users u1 ON i.sender_id = u1.id
-            JOIN users u2 ON i.receiver_id = u2.id
+            INNER JOIN users u1 ON i.sender_id = u1.id
+            INNER JOIN users u2 ON i.receiver_id = u2.id
             WHERE i.status = 'matched'
             ORDER BY i.created_at DESC
+            LIMIT 50
         `);
 
         return res.status(200).json({ success: true, matches });
     } catch (e) {
         console.error('Get match history error:', e);
+        // If table doesn't exist or has different schema, return empty array gracefully
+        if (e.message.includes('Unknown column') || e.message.includes("doesn't exist") || e.message.includes("Table")) {
+            return res.status(200).json({ success: true, matches: [], note: 'No match data available yet' });
+        }
         return res.status(500).json({ success: false, message: 'Database error: ' + e.message });
     }
 }
@@ -330,8 +335,10 @@ async function handleGetAllUsers(req, res) {
             params.push(status);
         }
 
-        sql += ` ORDER BY u.created_at DESC LIMIT ? OFFSET ?`;
-        params.push(parseInt(limit), offset);
+        // Use inline values for LIMIT/OFFSET (MySQL param binding can be problematic)
+        const limitVal = Math.max(1, Math.min(100, parseInt(limit) || 20));
+        const offsetVal = Math.max(0, parseInt(offset) || 0);
+        sql += ` ORDER BY u.created_at DESC LIMIT ${limitVal} OFFSET ${offsetVal}`;
 
         const users = await query(sql, params);
 

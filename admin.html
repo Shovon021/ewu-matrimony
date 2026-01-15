@@ -465,8 +465,8 @@
                 <span>&#128202;</span> Dashboard
             </a>
             <a href="#" class="menu-item" onclick="switchView('verifications', this); return false;">
-                <span>&#9989;</span> Verifications <span
-                    style="margin-left:auto; background:var(--primary); padding:2px 8px; border-radius:10px; font-size:0.7rem;">3</span>
+                <span>&#9989;</span> Verifications <span id="pendingBadge"
+                    style="margin-left:auto; background:var(--primary); padding:2px 8px; border-radius:10px; font-size:0.7rem; display:none;">0</span>
             </a>
             <a href="#" class="menu-item" onclick="switchView('messages', this); return false;">
                 <span>&#128172;</span> Messages
@@ -1257,6 +1257,14 @@
                     document.getElementById('statPending').textContent = s.pending_accounts || 0;
                     document.getElementById('statVerified').textContent = s.verified_biodatas || 0;
                     document.getElementById('statMatches').textContent = s.total_matches || 0;
+
+                    // Update sidebar pending badge
+                    const badge = document.getElementById('pendingBadge');
+                    if (badge) {
+                        const pending = s.pending_accounts || 0;
+                        badge.textContent = pending;
+                        badge.style.display = pending > 0 ? 'inline-block' : 'none';
+                    }
                 } else {
                     console.error('Stats API returned:', result);
                     // Show 0 as fallback

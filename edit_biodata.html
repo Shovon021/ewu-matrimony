@@ -436,12 +436,14 @@
 
         // Helper to get logged in user
         function getUser() {
-            const userStr = localStorage.getItem('user');
-            if (!userStr) {
+            const studentId = localStorage.getItem('student_id');
+            const isLoggedIn = localStorage.getItem('is_logged_in');
+
+            if (!studentId || isLoggedIn !== 'true') {
                 window.location.href = 'login.html';
                 return null;
             }
-            return JSON.parse(userStr);
+            return { student_id: studentId };
         }
 
         const currentUser = getUser();

@@ -188,6 +188,10 @@
 
         // DOMContentLoaded for form handling
         document.addEventListener('DOMContentLoaded', function () {
+            // Clear any existing session
+            localStorage.removeItem('student_id');
+            localStorage.removeItem('is_logged_in');
+
             const toggleBtn = document.querySelector('.password-toggle');
             const passwordInput = document.getElementById('password');
 
@@ -236,6 +240,8 @@
                         const result = await response.json();
 
                         if (result.success) {
+                            localStorage.setItem('student_id', studentId);
+                            localStorage.setItem('is_logged_in', 'true');
                             Toast.success('Welcome Back!', 'Login successful. Redirecting...');
                             setTimeout(() => window.location.href = 'profile.html', 1500);
                         } else {

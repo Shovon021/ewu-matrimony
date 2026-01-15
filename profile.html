@@ -505,7 +505,18 @@
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const profileId = urlParams.get('id');
-                const apiEndpoint = profileId ? 'api/profile/get_public.php?id=' + profileId : 'api/profile/get.php';
+                const myStudentId = localStorage.getItem('student_id');
+
+                let apiEndpoint;
+                if (profileId) {
+                    apiEndpoint = 'api/profile/get_public.php?id=' + profileId;
+                } else if (myStudentId) {
+                    apiEndpoint = 'api/profile/get.php?student_id=' + myStudentId;
+                } else {
+                    // Not logged in and no ID specified
+                    window.location.href = 'login.html';
+                    return;
+                }
 
                 const response = await fetch(apiEndpoint);
                 const result = await response.json();

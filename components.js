@@ -85,59 +85,52 @@ class Toast {
 // =====================================================
 
 async function updateNav() {
-    try {
-        const response = await fetch('api/auth/check.php');
-        const data = await response.json();
+    const isLoggedIn = localStorage.getItem('is_logged_in') === 'true';
+    const navButtons = document.querySelector('.nav-buttons');
 
-        const navButtons = document.querySelector('.nav-buttons');
-        if (!navButtons) return;
+    if (!navButtons) return;
 
-        if (data.logged_in) {
-            // User is logged in - show user menu
-            const initial = data.name ? data.name.charAt(0).toUpperCase() : 'U';
-            navButtons.innerHTML = `
-                <a href="matches.html" class="btn btn-outline">
-                    ${SVG_ICONS.heart} Matches
-                </a>
-                <div class="nav-dropdown">
-                    <div class="nav-avatar">${initial}</div>
-                    <div class="nav-dropdown-menu">
-                        <a href="profile.html" class="nav-dropdown-item">
-                            ${SVG_ICONS.user} My Profile
-                        </a>
-                        <a href="edit_biodata.html" class="nav-dropdown-item">
-                            ${SVG_ICONS.edit} Edit Biodata
-                        </a>
-                        <a href="matches.html" class="nav-dropdown-item">
-                            ${SVG_ICONS.heart} My Matches
-                        </a>
-                        <div class="nav-dropdown-divider"></div>
-                        <a href="#" class="nav-dropdown-item danger" onclick="logout()">
-                            ${SVG_ICONS.logout} Logout
-                        </a>
-                    </div>
+    if (isLoggedIn) {
+        // User is logged in - show user menu
+        navButtons.innerHTML = `
+            <a href="matches.html" class="btn btn-outline">
+                ${SVG_ICONS.heart} Matches
+            </a>
+            <div class="nav-dropdown">
+                <div class="nav-avatar">U</div>
+                <div class="nav-dropdown-menu">
+                    <a href="profile.html" class="nav-dropdown-item">
+                        ${SVG_ICONS.user} My Profile
+                    </a>
+                    <a href="edit_biodata.html" class="nav-dropdown-item">
+                        ${SVG_ICONS.edit} Edit Biodata
+                    </a>
+                    <a href="matches.html" class="nav-dropdown-item">
+                        ${SVG_ICONS.heart} My Matches
+                    </a>
+                    <div class="nav-dropdown-divider"></div>
+                    <a href="#" class="nav-dropdown-item danger" onclick="logout(event)">
+                        ${SVG_ICONS.logout} Logout
+                    </a>
                 </div>
-            `;
-        } else {
-            // Guest user - show login/signup
-            navButtons.innerHTML = `
-                <a href="login.html" class="btn btn-outline">Login</a>
-                <a href="register.html" class="btn btn-primary">Sign Up</a>
-            `;
-        }
-    } catch (e) {
-        console.log('Nav check failed, showing guest nav');
+            </div>
+        `;
+    } else {
+        // Guest user - show login/signup
+        navButtons.innerHTML = `
+            <a href="login.html" class="btn btn-outline">Login</a>
+            <a href="register.html" class="btn btn-primary">Sign Up</a>
+        `;
     }
 }
 
-async function logout() {
-    try {
-        await fetch('api/auth/logout.php');
-        Toast.success('Logged Out', 'See you again soon!');
-        setTimeout(() => window.location.href = 'index.html', 1000);
-    } catch (e) {
-        window.location.href = 'index.html';
-    }
+async function logout(e) {
+    if (e) e.preventDefault();
+    localStorage.removeItem('student_id');
+    localStorage.removeItem('is_logged_in');
+
+    Toast.success('Logged Out', 'See you again soon!');
+    setTimeout(() => window.location.href = 'index.html', 1000);
 }
 
 // =====================================================

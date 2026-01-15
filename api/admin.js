@@ -150,13 +150,27 @@ async function handleGetBiodataDetails(req, res) {
     }
 
     try {
-        const users = await query('SELECT * FROM users WHERE student_id = ?', [studentId]);
+        // Fetch User and Profile data joined
+        const users = await query(`
+            SELECT 
+                u.id as user_pk, u.student_id, u.first_name, u.last_name, u.email, u.phone, 
+                u.gender, u.dob, u.religion, u.status, u.batch_year, 
+                u.verification_status, u.id_card_image, u.created_at,
+                p.*
+            FROM users u
+            LEFT JOIN profiles p ON u.id = p.user_id
+            WHERE u.student_id = ?
+        `, [studentId]);
+
         if (users.length === 0) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const { password, ...safeUser } = users[0];
-        return res.status(200).json({ success: true, data: safeUser });
+        const data = users[0];
+        // Remove sensitive data
+        delete data.password;
+
+        return res.status(200).json({ success: true, data: data });
     } catch (e) {
         console.error('Get biodata error:', e);
         return res.status(500).json({ success: false, message: 'Database error: ' + e.message });

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         let sql = `
             SELECT 
                 u.id, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year, u.status,
-                p.height, p.occupation, p.education, p.location, p.photo
+                p.height, p.occupation, p.education, p.present_address as location, p.photo
             FROM users u
             LEFT JOIN profiles p ON u.id = p.user_id
             WHERE u.verification_status = 'verified'

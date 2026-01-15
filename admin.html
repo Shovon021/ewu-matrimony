@@ -1141,18 +1141,32 @@
         // Load real stats
         async function loadStats() {
             try {
+                console.log('Loading stats...');
                 const response = await fetch('api/admin?action=stats');
                 const result = await response.json();
+                console.log('Stats result:', result);
 
-                if (result.success) {
+                if (result.success && result.stats) {
                     const s = result.stats;
-                    document.getElementById('statTotalUsers').textContent = s.total_users;
-                    document.getElementById('statPending').textContent = s.pending_accounts;
-                    document.getElementById('statVerified').textContent = s.verified_biodatas;
-                    document.getElementById('statMatches').textContent = s.total_matches;
+                    document.getElementById('statTotalUsers').textContent = s.total_users || 0;
+                    document.getElementById('statPending').textContent = s.pending_accounts || 0;
+                    document.getElementById('statVerified').textContent = s.verified_biodatas || 0;
+                    document.getElementById('statMatches').textContent = s.total_matches || 0;
+                } else {
+                    console.error('Stats API returned:', result);
+                    // Show 0 as fallback
+                    document.getElementById('statTotalUsers').textContent = '0';
+                    document.getElementById('statPending').textContent = '0';
+                    document.getElementById('statVerified').textContent = '0';
+                    document.getElementById('statMatches').textContent = '0';
                 }
             } catch (e) {
                 console.error('Error loading stats:', e);
+                // Show error indicator
+                document.getElementById('statTotalUsers').textContent = '!';
+                document.getElementById('statPending').textContent = '!';
+                document.getElementById('statVerified').textContent = '!';
+                document.getElementById('statMatches').textContent = '!';
             }
         }
 

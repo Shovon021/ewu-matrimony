@@ -358,7 +358,7 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await fetch('api/public/contact_submit.php', {
+                const response = await fetch('api/public?action=contact_submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)

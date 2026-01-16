@@ -18,6 +18,31 @@ window.addEventListener('scroll', () => {
 
     if (slides.length === 0) return; // Not on homepage
 
+    // MOBILE PERFORMANCE: Disable videos on mobile devices
+    const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // On mobile: Pause all videos immediately to save resources
+        slides.forEach(slide => {
+            const video = slide.querySelector('video');
+            if (video) {
+                video.pause();
+                video.preload = 'none';
+                video.removeAttribute('autoplay');
+            }
+        });
+        // Use simple interval instead of video-based transitions on mobile
+        let mobileSlide = 0;
+        setInterval(() => {
+            slides[mobileSlide].classList.remove('active');
+            dots[mobileSlide]?.classList.remove('active');
+            mobileSlide = (mobileSlide + 1) % slides.length;
+            slides[mobileSlide].classList.add('active');
+            dots[mobileSlide]?.classList.add('active');
+        }, 5000);
+        return; // Exit early, skip video logic
+    }
+
     let currentSlide = 0;
 
     function goToSlide(index) {

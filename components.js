@@ -87,6 +87,8 @@ class Toast {
 
 async function updateNav() {
     const isLoggedIn = localStorage.getItem('is_logged_in') === 'true';
+    const userData = localStorage.getItem('user_data');
+    const user = userData ? JSON.parse(userData) : {};
     const navButtons = document.querySelector('.nav-buttons');
 
     if (!navButtons) return;
@@ -94,7 +96,7 @@ async function updateNav() {
     if (isLoggedIn) {
         // User is logged in - show user menu
         navButtons.innerHTML = `
-            <a href="matches.html" class="btn btn-outline" style="border:none; padding: 0.5rem;" title="My Matches">
+            <a href="matches.html" class="nav-icon-btn" title="My Matches">
                 ${SVG_ICONS.heart}
             </a>
             
@@ -114,7 +116,7 @@ async function updateNav() {
             </div>
 
             <div class="nav-dropdown">
-                <div class="nav-avatar">U</div>
+                <div class="nav-avatar">${user.first_name ? user.first_name.charAt(0).toUpperCase() : 'U'}</div>
                 <div class="nav-dropdown-menu">
                     <a href="profile.html" class="nav-dropdown-item">
                         ${SVG_ICONS.user} My Profile

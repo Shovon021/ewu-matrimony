@@ -332,27 +332,53 @@
    NOTIFICATIONS SYSTEM
    ===================================================== */
 
-.nav-notification {
+/* =====================================================
+   NOTIFICATIONS SYSTEM
+   ===================================================== */
+
+/* Premium Glassmorphism Nav Icons */
+.nav-icon-btn,
+.nav-notification,
+.nav-avatar {
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
-    transition: background 0.2s;
+    background: rgba(255, 255, 255, 0.15);
+    /* Glass effect */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    /* For <a> tags */
 }
 
-.nav-notification:hover {
-    background: var(--gray-100);
+.nav-icon-btn:hover,
+.nav-notification:hover,
+.nav-avatar:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.nav-icon-btn:active,
+.nav-notification:active {
+    transform: scale(0.95);
 }
 
 .nav-badge {
     position: absolute;
-    top: 2px;
-    right: 2px;
+    top: -2px;
+    right: -2px;
     background: #ef4444;
+    /* Red */
     color: white;
     font-size: 0.7rem;
     font-weight: 700;
@@ -363,7 +389,17 @@
     align-items: center;
     justify-content: center;
     padding: 0 4px;
-    border: 2px solid white;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Specific Avatar Styles override */
+.nav-avatar {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .notification-dropdown {

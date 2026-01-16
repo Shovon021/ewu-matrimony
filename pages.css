@@ -1206,3 +1206,47 @@
         flex-direction: column;
     }
 }
+/* ===== MOBILE FIXES FOR PAGES ===== */
+@media (max-width: 768px) {
+    /* Fix the Blocky Gradient Text Issue */
+    .page-header h1 {
+        background: none !important;
+        -webkit-text-fill-color: initial !important; 
+        color: #ffffff !important; /* White text fallback */
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+        font-size: 2.5rem !important;
+        animation: none !important;
+    }
+
+    /* Alternative: If we really want gradient, we do it safer */
+    @supports (-webkit-background-clip: text) {
+        .page-header h1 {
+            background: linear-gradient(135deg, #ffffff, #ffeaa7) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            color: transparent !important;
+        }
+    }
+
+    /* Fix Subtitle Box */
+    .page-header p {
+        background: rgba(0,0,0,0.4) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
+        font-size: 1rem !important;
+        padding: 0.5rem 1rem !important;
+    }
+
+    /* Reduce Video Load on Pages too if present */
+    .page-header-video-bg {
+        display: none !important;
+    }
+    
+    .page-header-video {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images/header-new.png');
+        background-size: cover;
+        background-position: center;
+    }
+}

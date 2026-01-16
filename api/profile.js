@@ -61,8 +61,11 @@ async function handleGetProfile(req, res) {
 
     // Handle public profile viewing by user ID
     if (action === 'get_public' && publicId) {
+        // Need viewer_id to check for match
+        const viewerId = req.query.viewer_id;
+
         const profiles = await query(`
-            SELECT p.*, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year
+            SELECT p.*, u.student_id, u.first_name, u.last_name, u.gender, u.dob, u.religion, u.batch_year, u.phone
             FROM users u
             LEFT JOIN profiles p ON p.user_id = u.id
             WHERE u.id = ? AND u.verification_status = 'verified'
@@ -72,7 +75,33 @@ async function handleGetProfile(req, res) {
             return res.status(404).json({ success: false, message: 'Profile not found' });
         }
 
-        return res.status(200).json({ success: true, data: profiles[0] });
+        const profile = profiles[0];
+
+        // Hide phone by default
+        let showPhone = false;
+
+        // If viewer is viewing their own profile
+        if (viewerId && String(viewerId) === String(publicId)) {
+            showPhone = true;
+        }
+        // If viewer is matched with this user
+        else if (viewerId) {
+            const matchCheck = await query(
+                `SELECT status FROM interests 
+                 WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?))
+                 AND status = 'matched'`,
+                [viewerId, publicId, publicId, viewerId]
+            );
+            if (matchCheck.length > 0) {
+                showPhone = true;
+            }
+        }
+
+        if (!showPhone) {
+            delete profile.phone;
+        }
+
+        return res.status(200).json({ success: true, data: profile });
     }
 
     // Handle own profile viewing by student_id

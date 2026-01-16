@@ -370,6 +370,30 @@
                             Login required to contact this EWU member
                         </p>
                     </div>
+
+                    <!-- Phone Number Section (New) -->
+                    <div id="contactPhone"
+                        style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                        <div
+                            style="font-weight: 600; font-size: 0.9rem; color: var(--gray-700); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                <path
+                                    d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                            </svg>
+                            Phone Number
+                        </div>
+
+                        <div id="contactPhoneValue"
+                            style="font-size: 1.1rem; font-weight: 700; color: var(--primary); display: none;">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <div id="contactPhoneLock"
+                            style="font-size: 0.85rem; color: var(--gray-500); background: var(--gray-50); padding: 8px; border-radius: 6px; text-align: center;">
+                            <span style="display: block; margin-bottom: 4px;">🔒 Hidden</span>
+                            Matched connection required to view
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Similar EWU Profiles -->
@@ -509,12 +533,25 @@
                 const profileId = urlParams.get('id');
                 const myStudentId = localStorage.getItem('student_id');
 
+                // Get logged in user ID for match checking
+                let viewerId = null;
+                const userData = localStorage.getItem('user_data');
+                if (userData) {
+                    try {
+                        const parsed = JSON.parse(userData);
+                        viewerId = parsed.id;
+                    } catch (e) { console.error('Error parsing user data', e); }
+                }
+
                 let apiEndpoint;
                 if (profileId) {
                     // Viewing someone else's profile (public view)
                     apiEndpoint = 'api/profile?action=get_public&id=' + profileId;
+                    if (viewerId) apiEndpoint += '&viewer_id=' + viewerId;
                 } else if (myStudentId) {
                     // Viewing own profile
+                    // Note: sending student_id implies viewing own, which always shows phone
+                    // But we should also send viewer_id if possible for consistency, though backend handles student_id separately
                     apiEndpoint = 'api/profile?student_id=' + myStudentId;
                 } else {
                     // Not logged in and no ID specified
@@ -533,13 +570,29 @@
                         const items = document.querySelectorAll('.info-item');
                         for (let item of items) {
                             const labelEl = item.querySelector('.info-label');
-                            if (labelEl && labelEl.textContent.trim().includes(label)) {
+                            if (labelEl && labelEl.textContent.trim() === label) {
                                 const valueEl = item.querySelector('.info-value');
                                 if (valueEl) valueEl.textContent = value || 'Not Specified';
                                 return;
                             }
                         }
                     };
+
+                    // Handle Phone Number Display
+                    const phoneContainer = document.getElementById('contactPhone');
+                    const phoneValue = document.getElementById('contactPhoneValue');
+                    const phoneLockMsg = document.getElementById('contactPhoneLock');
+
+                    if (phoneContainer && phoneValue) {
+                        if (data.phone) {
+                            phoneValue.textContent = data.phone;
+                            phoneValue.style.display = 'block';
+                            if (phoneLockMsg) phoneLockMsg.style.display = 'none';
+                        } else {
+                            phoneValue.style.display = 'none';
+                            if (phoneLockMsg) phoneLockMsg.style.display = 'block';
+                        }
+                    }
 
                     // Update Image
                     const heroImg = document.querySelector('.profile-header img') || document.querySelector('.profile-main img');
@@ -581,8 +634,8 @@
                     updateField('Profession', data.occupation);
                     updateField('Company', data.company);
 
-                    updateField('Father', data.father_name);
-                    updateField('Mother', data.mother_name);
+                    updateField('Father\'s Name', data.father_name);
+                    updateField('Mother\'s Name', data.mother_name);
 
                     // Update Header Name (hero section)
                     const headerName = document.querySelector('.profile-header-info h1');

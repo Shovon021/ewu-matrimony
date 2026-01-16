@@ -40,6 +40,19 @@ async function handleSend(req, res) {
         return res.status(400).json({ success: false, message: 'Sender ID, receiver ID, and message required' });
     }
 
+    // Verify Match Status
+    const matchCheck = await query(
+        `SELECT status FROM interests 
+         WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
+         LIMIT 1`,
+        [sender_id, receiver_id, receiver_id, sender_id]
+    );
+
+    // Check if a record exists AND it is 'matched'
+    if (matchCheck.length === 0 || matchCheck[0].status !== 'matched') {
+        return res.status(403).json({ success: false, message: 'You can only message users you are matched with' });
+    }
+
     await execute(
         'INSERT INTO messages (from_user_id, to_user_id, message, created_at) VALUES (?, ?, ?, NOW())',
         [sender_id, receiver_id, message]

@@ -597,9 +597,14 @@
                     // Update Image
                     const heroImg = document.querySelector('.profile-header img') || document.querySelector('.profile-main img');
                     if (heroImg) {
-                        heroImg.src = data.photo
-                            ? (data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo)
-                            : 'https://ui-avatars.com/api/?name=' + data.first_name + '+' + data.last_name + '&background=random&size=400';
+                        const isMasked = data.first_name === 'EWU' && data.last_name === 'Member';
+                        if (isMasked) {
+                            heroImg.src = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                        } else {
+                            heroImg.src = data.photo
+                                ? (data.photo.startsWith('http') ? data.photo : 'uploads/' + data.photo)
+                                : 'https://ui-avatars.com/api/?name=' + data.first_name + '+' + data.last_name + '&background=random&size=400';
+                        }
                     }
 
                     // Update About Me

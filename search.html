@@ -410,10 +410,17 @@
                 // ... rest of rendering code ...
                 grid.innerHTML = '';
                 profiles.forEach(profile => {
-                    // ... (rendering code same as before, see next chunk) ...
-                    const photoSrc = profile.photo
-                        ? (profile.photo.startsWith('http') ? profile.photo : `uploads/${profile.photo}`)
-                        : `https://ui-avatars.com/api/?name=${profile.first_name}+${profile.last_name}&background=random&size=400`;
+                    const isMasked = profile.first_name === 'EWU' && profile.last_name === 'Member';
+
+                    let photoSrc;
+                    if (isMasked) {
+                        // Generic "Hidden" Avatar
+                        photoSrc = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+                    } else {
+                        photoSrc = profile.photo
+                            ? (profile.photo.startsWith('http') ? profile.photo : `uploads/${profile.photo}`)
+                            : `https://ui-avatars.com/api/?name=${profile.first_name}+${profile.last_name}&background=random&size=400`;
+                    }
 
                     const card = document.createElement('div');
                     card.className = 'profile-card';

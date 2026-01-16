@@ -1018,26 +1018,31 @@
 }
 
 .contact-info-box {
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    background: linear-gradient(135deg, rgba(255, 75, 107, 0.92), rgba(255, 144, 104, 0.92)), url('images/rings-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
     border-radius: var(--radius-xl);
-    padding: var(--space-3xl);
-    /* Increased padding */
+    padding: var(--space-3xl) var(--space-xl);
     color: var(--white);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     justify-content: center;
-    /* Center vertically if height allows */
     min-height: 100%;
-    /* Fill height */
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
 }
 
 .contact-info-box h3 {
     color: var(--white);
     margin-bottom: var(--space-xl);
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    letter-spacing: -1px;
 }
 
 .contact-item {
@@ -1045,14 +1050,31 @@
     flex-direction: column;
     align-items: center;
     gap: var(--space-sm);
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-lg);
     width: 100%;
+    background: rgba(255, 255, 255, 0.15);
+    padding: var(--space-lg) var(--space-md);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.contact-item:last-child {
+    margin-bottom: 0;
+}
+
+.contact-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .contact-item-icon {
     width: 48px;
     height: 48px;
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--white);
+    color: var(--primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1060,21 +1082,24 @@
     font-size: 1.25rem;
     flex-shrink: 0;
     margin-bottom: var(--space-xs);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .contact-item h4 {
-    color: var(--white);
-    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
     margin-bottom: 0.25rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .contact-item p {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--white);
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    font-weight: 700;
 }
 
 .contact-form-box {

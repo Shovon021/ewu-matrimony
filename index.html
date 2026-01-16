@@ -8,18 +8,40 @@
     content="EWU Matrimony - Find your perfect life partner from East West University. Connect with verified EWU students and alumni.">
   <title>EWU Matrimony - Find Your Perfect Match from East West University</title>
 
-  <!-- Google Fonts -->
+  <!-- Critical: Show content immediately while CSS loads -->
+  <style>
+    body {
+      background: #f43f5e;
+    }
+
+    /* Brand color as initial background */
+    .header {
+      background: #f43f5e;
+      min-height: 60px;
+    }
+  </style>
+
+  <!-- Preconnect to critical origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
 
-  <!-- Styles -->
+  <!-- Defer Google Fonts - load after page renders -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+      rel="stylesheet">
+  </noscript>
+
+  <!-- Primary CSS - load immediately -->
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="theme.css">
-  <link rel="stylesheet" href="animations.css">
-  <link rel="stylesheet" href="icons.css">
+
+  <!-- Secondary CSS - can load async -->
+  <link rel="stylesheet" href="animations.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="icons.css" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="components.css">
 </head>
 

@@ -382,7 +382,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Batch</label>
-                        <select class="form-input" name="batch" required>
+                        <select class="form-input" name="batch_year" required>
                             <option value="">Select Batch Year</option>
                         </select>
                     </div>
@@ -457,7 +457,7 @@
         }
 
         // Initialize Batch Years (1995 - Current Year + 1)
-        const batchSelect = document.querySelector('select[name="batch"]');
+        const batchSelect = document.querySelector('select[name="batch_year"]');
         if (batchSelect) {
             batchSelect.innerHTML = '<option value="">Select Batch Year</option>';
             const endYear = new Date().getFullYear() + 1; // e.g. 2027
@@ -468,31 +468,6 @@
                 opt.textContent = y;
                 batchSelect.appendChild(opt);
             }
-        }
-        const step = parseInt(dot.dataset.step);
-        dot.classList.remove('active', 'completed');
-        if (step === currentStep) {
-            dot.classList.add('active');
-        } else if (step < currentStep) {
-            dot.classList.add('completed');
-        }
-            });
-
-        // Show/Hide Content
-        contents.forEach(content => {
-            content.classList.remove('active');
-            if (content.id === `step${currentStep}`) {
-                content.classList.add('active');
-            }
-        });
-
-        // Update Buttons
-        prevBtn.classList.toggle('visible', currentStep > 1);
-        if (currentStep === steps) {
-            nextBtn.textContent = 'Create Account';
-        } else {
-            nextBtn.textContent = 'Next';
-        }
         }
 
         nextBtn.addEventListener('click', () => {

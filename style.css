@@ -1535,11 +1535,12 @@ p {
   color: black !important;
 }
 
-/* Navigation Dots */
+/* Navigation Dots - HIDDEN */
 .hero-nav-dots {
+  display: none;
+  /* Hidden to avoid overlap issues */
   position: absolute;
   bottom: 220px;
-  /* Moved UP to avoid overlapping stats */
   left: 50%;
   transform: translateX(-50%);
   display: flex;

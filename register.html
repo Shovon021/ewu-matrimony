@@ -451,6 +451,14 @@
                 }
             });
 
+            // Show/Hide Content [RESTORED]
+            contents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `step${currentStep}`) {
+                    content.classList.add('active');
+                }
+            });
+
             // Update Buttons
             prevBtn.classList.toggle('visible', currentStep > 1);
             nextBtn.textContent = currentStep === steps ? 'Register' : 'Next';

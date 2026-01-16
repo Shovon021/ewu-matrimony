@@ -1999,3 +1999,29 @@ p {
     font-size: 0.65rem !important;
   }
 }
+
+/* ===== HERO HEIGHT & BACKGROUND FIX ===== */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 85vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/auth-bg.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+
+  /* Ensure content is centered */
+  .hero-content, .hero-slide-content {
+     position: relative !important;
+     width: 100% !important;
+     padding-top: 0 !important;
+     margin-top: 50px !important; 
+  }
+
+  /* Force background attachment scroll on mobile to avoid lag */
+  .hero, .page-header {
+     background-attachment: scroll !important;
+  }
+}

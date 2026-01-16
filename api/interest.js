@@ -95,6 +95,12 @@ async function handleSend(req, res) {
         return res.status(400).json({ success: false, message: 'Sender ID and receiver ID required' });
     }
 
+    // Security Check: Sender MUST be verified
+    const senderCheck = await query('SELECT verification_status FROM users WHERE id = ?', [sender_id]);
+    if (senderCheck.length === 0 || senderCheck[0].verification_status !== 'verified') {
+        return res.status(403).json({ success: false, message: 'You must be a verified member to connect.' });
+    }
+
     const existing = await query(
         'SELECT id FROM interests WHERE sender_id = ? AND receiver_id = ?',
         [sender_id, receiver_id]

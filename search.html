@@ -478,6 +478,14 @@
 
         // Send Interest to a user
         async function sendInterest(userId, btn) {
+            const userData = localStorage.getItem('user_data');
+            if (!userData) {
+                alert('Please login to connect!');
+                window.location.href = 'login.html';
+                return;
+            }
+            const user = JSON.parse(userData);
+
             try {
                 btn.disabled = true;
                 btn.innerHTML = '...';
@@ -485,7 +493,10 @@
                 const response = await fetch('api/interest?action=send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ to_user_id: userId })
+                    body: JSON.stringify({
+                        sender_id: user.id,
+                        receiver_id: userId
+                    })
                 });
 
                 const result = await response.json();

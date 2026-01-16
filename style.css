@@ -691,9 +691,55 @@ p {
   }
 }
 
+/* ===== PREMIUM LOGO ===== */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  position: relative;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #ff4b6b, #ff9068);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 20px rgba(255, 75, 107, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-icon {
+  transform: rotate(10deg) scale(1.05);
+}
+
+.logo span {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #ffffff, #ffe0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* For light mode adjustments if needed */
+/* :root[data-theme="light"] .logo span { ... } */
+
 .stat-item {
   text-align: center;
   animation: countUp 0.5s ease-out backwards;
+  /* Fix width stability */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .stat-item:nth-child(1) {
@@ -726,19 +772,28 @@ p {
 
 .stat-number {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 3rem;
+  /* Increased size */
+  font-weight: 800;
   color: var(--white);
   line-height: 1;
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  text-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
   font-variant-numeric: tabular-nums;
-  /* Monospaced numbers */
+
+  /* STABILITY FIX */
+  display: inline-flex;
+  justify-content: center;
+  min-width: 2ch;
+  /* Reserve space for at least 2 digits */
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
   margin-top: var(--space-sm);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* ===== HOW IT WORKS SECTION ===== */

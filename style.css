@@ -1804,3 +1804,11 @@ p {
   background: var(--secondary);
   color: var(--black);
 }
+/* Footer Logo Fix */
+.footer .logo span {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  color: #333 !important;
+  text-shadow: none !important;
+}

@@ -34,12 +34,22 @@ async function handleStats(req, res) {
     const totalUsersResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified'");
     const totalVerified = totalUsersResult[0]?.count || 0;
 
-    // Alumni (Batch year < 2022)
-    const alumniResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND batch_year < 2022");
+    // Dynamic Stats Logic
+    const currentYear = new Date().getFullYear();
+    const cutoffYear = currentYear - 4; // Approx 4 years for undergrad
+
+    // Alumni (Batch year < cutoff, e.g. < 2022)
+    const alumniResult = await query(
+        "SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND CAST(batch_year AS UNSIGNED) < ? AND CAST(batch_year AS UNSIGNED) > 0",
+        [cutoffYear]
+    );
     const alumni = alumniResult[0]?.count || 0;
 
-    // Undergrad (Batch year >= 2022)
-    const undergradResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND batch_year >= 2022");
+    // Undergrad (Batch year >= cutoff, e.g. >= 2022)
+    const undergradResult = await query(
+        "SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND CAST(batch_year AS UNSIGNED) >= ?",
+        [cutoffYear]
+    );
     const undergrad = undergradResult[0]?.count || 0;
 
     // Graduate (Masters/PhD - placeholder for now as we don't have a field)

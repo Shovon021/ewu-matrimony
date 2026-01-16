@@ -1538,8 +1538,8 @@ p {
 /* Navigation Dots */
 .hero-nav-dots {
   position: absolute;
-  bottom: 120px;
-  /* Moved DOWN as requested */
+  bottom: 220px;
+  /* Moved UP to avoid overlapping stats */
   left: 50%;
   transform: translateX(-50%);
   display: flex;

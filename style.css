@@ -1812,3 +1812,8 @@ p {
   color: #333 !important;
   text-shadow: none !important;
 }
+
+/* Stats Font Size Override */
+.stat-number {
+  font-size: 2.2rem !important;
+}

@@ -140,7 +140,7 @@ async function handleMyMatches(req, res) {
 
     const matches = await query(`
         SELECT 
-            u.id, u.student_id, u.first_name, u.last_name, u.gender,
+            u.id, u.student_id, u.first_name, u.last_name, u.gender, u.phone,
             p.photo, p.occupation
         FROM interests i
         INNER JOIN users u ON (

@@ -302,12 +302,13 @@
 
         async function loadMatches() {
             try {
-                const response = await fetch('api/interest/my_matches.php');
+                // NEW ENDPOINT
+                const response = await fetch('api/interest?action=my_matches&user_id=' + JSON.parse(localStorage.getItem('user_data')).id);
                 const result = await response.json();
 
                 const container = document.getElementById('matchesList');
 
-                if (!result.success || result.matches.length === 0) {
+                if (!result.success || !result.data || result.data.length === 0) {
                     container.innerHTML = `
                         <div class="no-matches">
                             <h3> No matches yet</h3>
@@ -319,7 +320,7 @@
                 }
 
                 container.innerHTML = '';
-                result.matches.forEach(match => {
+                result.data.forEach(match => {
                     const photoSrc = match.photo
                         ? (match.photo.startsWith('http') ? match.photo : `uploads/${match.photo}`)
                         : `https://ui-avatars.com/api/?name=${match.first_name}&background=random`;
@@ -347,40 +348,18 @@
 
             // Update active state
             document.querySelectorAll('.match-item').forEach(i => i.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            if (event) event.currentTarget.classList.add('active');
 
             const photoSrc = user.photo
                 ? (user.photo.startsWith('http') ? user.photo : `uploads/${user.photo}`)
                 : `https://ui-avatars.com/api/?name=${user.first_name}&background=random`;
 
-            let contactHtml = '';
-            if (user.contact_status === 'revealed') {
-                contactHtml = `
+            // Simple Contact Display since we are matched
+            let contactHtml = `
                     <div class="contact-reveal" style="border-color:#86efac; background:#f0fdf4;">
-                        <h5 style="color:#166534;">Contact Revealed!</h5>
-                        <p style="margin:0;">Phone: <strong>${user.phone}</strong></p>
+                        <h5 style="color:#166534;">Matched Connection</h5>
+                        <p style="margin:0;">Phone: <strong>${user.phone || 'Not provided'}</strong></p>
                     </div>`;
-            } else if (user.contact_status === 'sent') {
-                contactHtml = `
-                    <div class="contact-reveal" style="border-color:#fdba74; background:#fff7ed;">
-                        <h5 style="color:#9a3412;">Request Sent</h5>
-                        <p style="margin:0; font-size:0.9rem;">Waiting for ${user.first_name} to share back.</p>
-                    </div>`;
-            } else if (user.contact_status === 'received') {
-                contactHtml = `
-                    <div class="contact-reveal" style="border-color:#93c5fd; background:#eff6ff;">
-                        <h5 style="color:#1e40af;">${user.first_name} shared contact!</h5>
-                        <p style="margin-bottom:0.5rem; font-size:0.9rem;">Share yours to see their number.</p>
-                        <button class="btn btn-sm btn-primary" onclick="shareContact(${user.id})">Accept & Reveal</button>
-                    </div>`;
-            } else {
-                contactHtml = `
-                    <div class="contact-reveal" style="border-color:#e5e7eb; background:#f9fafb;">
-                        <h5 style="color:#374151;">Contact Hidden</h5>
-                        <p style="margin-bottom:0.5rem; font-size:0.9rem;">Share your number to request theirs.</p>
-                        <button class="btn btn-sm btn-outline-primary" onclick="shareContact(${user.id})">Share Contact</button>
-                    </div>`;
-            }
 
             const chatArea = document.getElementById('chatArea');
             chatArea.innerHTML = `
@@ -392,11 +371,13 @@
                         <p>${user.occupation || 'EWU Member'}</p>
                     </div>
                 </div>
+                <!-- Block feature pending implementation
                 <button class="btn btn-sm btn-outline-danger" onclick="blockUser(${user.id})" title="Block User">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
                     </svg>
                 </button>
+                -->
             </div>
             ${contactHtml}
                 <div class="chat-messages" id="chatMessages">
@@ -411,25 +392,28 @@
             loadMessages(user.id);
         }
 
-        async function loadMessages(userId) {
+        async function loadMessages(partnerId) {
             try {
-                const response = await fetch(`api/chat/get.php?user_id=${userId}`);
+                const userId = JSON.parse(localStorage.getItem('user_data')).id;
+                // NEW ENDPOINT
+                const response = await fetch(`api/chat?action=get&user_id=${userId}&partner_id=${partnerId}`);
                 const result = await response.json();
 
                 const container = document.getElementById('chatMessages');
 
-                if (!result.success || result.messages.length === 0) {
+                if (!result.success || !result.data || result.data.length === 0) {
                     container.innerHTML = '<p style="text-align:center; color:var(--gray-400);">No messages yet. Say hi! </p>';
                     return;
                 }
 
                 container.innerHTML = '';
-                result.messages.forEach(msg => {
+                result.data.forEach(msg => {
+                    const isSent = String(msg.from_user_id) === String(userId);
                     const div = document.createElement('div');
-                    div.className = `message ${msg.direction}`;
+                    div.className = `message ${isSent ? 'sent' : 'received'}`;
                     div.innerHTML = `
                         ${msg.message}
-                        <div class="message-time">${new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                        <div class="message-time">${new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                     `;
                     container.appendChild(div);
                 });
@@ -450,11 +434,14 @@
             input.value = '';
 
             try {
-                const response = await fetch('api/chat/send.php', {
+                const userId = JSON.parse(localStorage.getItem('user_data')).id;
+                // NEW ENDPOINT
+                const response = await fetch('api/chat?action=send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        to_user_id: currentChatUser.id,
+                        sender_id: userId,
+                        receiver_id: currentChatUser.id,
                         message: message
                     })
                 });
@@ -471,81 +458,13 @@
             }
         }
 
-
-        async function blockUser(userId) {
-            if (!confirm('Are you sure you want to block this user? They will be removed from your matches and cannot contact you again.')) return;
-
-            try {
-                const response = await fetch('api/block/add.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        reason: 'User request'
-                    })
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    Toast.success('Blocked', 'User has been blocked');
-                    // Refresh matches list and clear chat
-                    loadMatches();
-                    document.getElementById('chatArea').innerHTML = `
-                        <div class="no-chat">
-                            <h3>?? Select a match to start chatting</h3>
-                        </div>`;
-                    currentChatUser = null;
-                } else {
-                    Toast.error('Error', result.message);
-                }
-            } catch (e) {
-                console.error('Error blocking user:', e);
-            }
-        }
-
-        async function shareContact(userId) {
-            try {
-                const btn = event.currentTarget;
-                const originalText = btn.innerText;
-                btn.innerText = 'Sharing...';
-                btn.disabled = true;
-
-                const response = await fetch('api/contact/share.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ target_user_id: userId })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    Toast.success('Contact Shared', 'Request sent successfully');
-                    // Refresh data to update status
-                    await loadMatches();
-                    // If chat is open, refresh it with new data
-                    if (currentChatUser && currentChatUser.id === userId) {
-                        // Find the updated user object in the DOM or re-fetch
-                        // Simpler: reload page or find in matches list
-                        // Since loadMatches updates the list, we can just trigger click on active item?
-                        // Or better:
-                        const updatedUser = Array.from(document.querySelectorAll('.match-item')).find(item => item.onclick.toString().includes(userId));
-                        // Trigger click to refresh view (hacky but works)
-                        // Cleanest: modify loadMatches to store matches globally
-                        location.reload();
-                    }
-                } else {
-                    Toast.error('Error', result.message);
-                    btn.innerText = originalText;
-                    btn.disabled = false;
-                }
-            } catch (e) {
-                console.error('Error sharing contact:', e);
-                Toast.error('Error', 'Failed to share contact');
-            }
-        }
-
         // Initialize
-        loadMatches();
+        const userData = localStorage.getItem('user_data');
+        if (!userData) {
+            window.location.href = 'login.html';
+        } else {
+            loadMatches();
+        }
     </script>
 </body>
 

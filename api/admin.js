@@ -165,13 +165,6 @@ async function handleLogin(req, res) {
         // Generate secure token
         const token = generateAdminToken();
 
-        // Store token with expiry
-        ADMIN_TOKENS.set(token, {
-            username: adminUsername,
-            createdAt: Date.now(),
-            expiresAt: Date.now() + TOKEN_EXPIRY_MS
-        });
-
         return res.status(200).json({
             success: true,
             message: 'Login successful',

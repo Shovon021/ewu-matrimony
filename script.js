@@ -320,15 +320,41 @@ function animateCounter(element, target, duration = 2000) {
 }
 
 // Animate stats on scroll
+// Animate stats on scroll
 const statsSection = document.querySelector('.hero-stats');
 if (statsSection) {
+    let animated = false;
+
+    const loadStats = async () => {
+        if (animated) return;
+        animated = true;
+
+        try {
+            const res = await fetch('api/public?action=stats');
+            const data = await res.json();
+
+            if (data.success && data.stats) {
+                const map = {
+                    'stat-undergrad': data.stats.undergrad_profiles,
+                    'stat-grad': data.stats.grad_profiles,
+                    'stat-alumni': data.stats.alumni_profiles,
+                    'stat-verified': data.stats.verified_profiles
+                };
+
+                Object.keys(map).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) animateCounter(el, map[id] || 0);
+                });
+            }
+        } catch (e) {
+            console.error('Failed to load stats:', e);
+        }
+    };
+
     const statsObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                document.querySelectorAll('.stat-number').forEach(stat => {
-                    const target = parseInt(stat.textContent.replace(/[^\d]/g, ''));
-                    animateCounter(stat, target);
-                });
+                loadStats();
                 statsObserver.unobserve(entry.target);
             }
         });

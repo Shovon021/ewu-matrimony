@@ -30,15 +30,22 @@ export default async function handler(req, res) {
 
 // ========== PUBLIC STATS ==========
 async function handleStats(req, res) {
+    // Total Verified
     const totalUsersResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified'");
-    const totalUsers = totalUsersResult[0]?.count || 0;
+    const totalVerified = totalUsersResult[0]?.count || 0;
 
-    const maleResult = await query("SELECT COUNT(*) as count FROM users WHERE gender = 'male' AND verification_status = 'verified'");
-    const males = maleResult[0]?.count || 0;
+    // Alumni (Batch year < 2022)
+    const alumniResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND batch_year < 2022");
+    const alumni = alumniResult[0]?.count || 0;
 
-    const femaleResult = await query("SELECT COUNT(*) as count FROM users WHERE gender = 'female' AND verification_status = 'verified'");
-    const females = femaleResult[0]?.count || 0;
+    // Undergrad (Batch year >= 2022)
+    const undergradResult = await query("SELECT COUNT(*) as count FROM users WHERE verification_status = 'verified' AND batch_year >= 2022");
+    const undergrad = undergradResult[0]?.count || 0;
 
+    // Graduate (Masters/PhD - placeholder for now as we don't have a field)
+    const grad = 0;
+
+    // Successful Matches
     let matches = 0;
     try {
         const matchesResult = await query("SELECT COUNT(*) as count FROM interests WHERE status = 'matched'");
@@ -49,9 +56,14 @@ async function handleStats(req, res) {
 
     return res.status(200).json({
         success: true,
-        total_profiles: totalUsers,
-        male_profiles: males,
-        female_profiles: females,
+        stats: {
+            undergrad_profiles: undergrad,
+            grad_profiles: grad,
+            alumni_profiles: alumni,
+            verified_profiles: totalVerified
+        },
+        // Keep old keys for backward compatibility if needed
+        total_profiles: totalVerified,
         successful_matches: matches
     });
 }

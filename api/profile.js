@@ -101,6 +101,18 @@ async function handleGetProfile(req, res) {
             delete profile.phone;
         }
 
+        // PRIVACY MASKING for Unauthenticated Viewers
+        if (!viewerId) {
+            profile.first_name = 'EWU';
+            profile.last_name = 'Member';
+            profile.photo = ''; // Trigger placeholder
+            profile.present_address = 'Login to view full details';
+            profile.permanent_address = 'Login to view full details';
+            profile.email = 'Hidden';
+            profile.student_id = 'Hidden';
+            // We keep bio, occupation, education, etc.
+        }
+
         return res.status(200).json({ success: true, data: profile });
     }
 

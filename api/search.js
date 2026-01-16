@@ -40,7 +40,35 @@ export default async function handler(req, res) {
         sql += ' ORDER BY u.created_at DESC LIMIT 50';
 
         const users = await query(sql, params);
-        return res.status(200).json({ success: true, data: users });
+
+        // Privacy Masking Logic
+        const viewerId = req.query.viewer_id;
+
+        const safeUsers = users.map(user => {
+            if (!viewerId) {
+                // Public View - MASK DATA
+                return {
+                    ...user,
+                    id: user.id, // Keep ID for linking
+                    first_name: 'EWU',
+                    last_name: 'Member',
+                    student_id: 'HIDDEN',
+                    photo: '', // Empty photo triggers placeholder in UI
+                    location: 'Login to View',
+                    present_address: 'Login to View',
+                    // Keep these for searching/filtering
+                    gender: user.gender,
+                    religion: user.religion,
+                    occupation: user.occupation,
+                    education: user.education,
+                    height: user.height,
+                    dob: user.dob // Needed for age calc on frontend
+                };
+            }
+            return user;
+        });
+
+        return res.status(200).json({ success: true, data: safeUsers });
 
     } catch (error) {
         console.error('Search error:', error);

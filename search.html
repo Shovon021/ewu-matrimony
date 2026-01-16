@@ -378,7 +378,17 @@
                 const minAge = minAgeInput.value;
                 const maxAge = maxAgeInput.value;
 
-                const response = await fetch(`api/search?gender=${gender}&religion=${religion}&min_age=${minAge}&max_age=${maxAge}`);
+                // Check for logged-in user
+                const userData = localStorage.getItem('user_data');
+                let viewerIdQuery = '';
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        if (user.id) viewerIdQuery = `&viewer_id=${user.id}`;
+                    } catch (e) { }
+                }
+
+                const response = await fetch(`api/search?gender=${gender}&religion=${religion}&min_age=${minAge}&max_age=${maxAge}${viewerIdQuery}`);
                 const result = await response.json();
 
                 // API returns { success: true, data: [...] }

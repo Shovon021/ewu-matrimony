@@ -46,13 +46,26 @@
     font-size: 3.5rem;
     font-weight: 800;
     margin-bottom: var(--space-md);
-    background: linear-gradient(135deg, #ffffff 0%, #ff9f43 50%, #ff4757 100%);
+    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #1dd1a1, #ff6b6b);
+    background-size: 300% 300%;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
     letter-spacing: -1px;
-    animation: fadeInUp 0.8s ease-out;
+    animation: pageHeaderGradient 6s ease-in-out infinite, fadeInUp 0.8s ease-out;
+}
+
+@keyframes pageHeaderGradient {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .page-header p {

@@ -1902,3 +1902,100 @@ p {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
+/* ===== COMPREHENSIVE MOBILE UI FIX ===== */
+@media (max-width: 768px) {
+  /* Fix Hero Section */
+  .hero {
+    min-height: auto !important;
+    padding-bottom: var(--space-xl) !important;
+  }
+
+  .hero-content,
+  .hero-slide-content {
+    padding: var(--space-lg) !important;
+    padding-top: 100px !important;
+  }
+
+  /* Fix Hero Title - Simpler text on mobile */
+  .hero h1,
+  .hero-slide-content h1 {
+    font-size: 1.8rem !important;
+    line-height: 1.3 !important;
+    margin-top: var(--space-lg) !important;
+  }
+
+  /* Fix rainbow span - Make it solid color on mobile for readability */
+  .hero h1 span,
+  .hero-slide-content h1 span {
+    background: linear-gradient(90deg, #ff6b6b, #feca57) !important;
+    background-size: 100% 100% !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    display: inline !important;
+  }
+
+  .hero-subtitle,
+  .hero-slide-content p {
+    font-size: 0.95rem !important;
+    margin-bottom: var(--space-lg) !important;
+    padding: 0 var(--space-sm) !important;
+  }
+
+  /* Fix CTA Buttons */
+  .hero-cta,
+  .hero-buttons {
+    flex-direction: column !important;
+    gap: var(--space-md) !important;
+    padding: 0 var(--space-lg) !important;
+    width: 100% !important;
+  }
+
+  .hero-cta .btn,
+  .hero-buttons .btn {
+    width: 100% !important;
+    padding: var(--space-md) var(--space-lg) !important;
+    font-size: 0.95rem !important;
+    justify-content: center !important;
+  }
+
+  /* Make outline button visible */
+  .hero-cta .btn-outline,
+  .hero-buttons .btn-outline {
+    background: rgba(255,255,255,0.15) !important;
+    border: 2px solid white !important;
+    color: white !important;
+  }
+
+  /* Fix Stats */
+  .hero-stats {
+    margin-top: var(--space-lg) !important;
+    padding: var(--space-md) !important;
+  }
+
+  /* Remove navigation arrows on mobile */
+  .hero-arrow {
+    display: none !important;
+  }
+
+  /* Logo text smaller on mobile */
+  .logo span {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 400px) {
+  .hero h1,
+  .hero-slide-content h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .stat-number {
+    font-size: 1.5rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.65rem !important;
+  }
+}

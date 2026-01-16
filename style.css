@@ -1867,3 +1867,38 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===== MOBILE STATS VISIBILITY FIX ===== */
+@media (max-width: 768px) {
+  .hero-stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: var(--space-md) !important;
+    padding: var(--space-xl) var(--space-md) !important;
+    margin-top: var(--space-xl) !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  .stat-item {
+    background: rgba(0, 0, 0, 0.3) !important;
+    padding: var(--space-md) !important;
+    border-radius: var(--radius-lg) !important;
+  }
+
+  .stat-number {
+    font-size: 1.8rem !important;
+    color: white !important;
+  }
+
+  .stat-label {
+    font-size: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
